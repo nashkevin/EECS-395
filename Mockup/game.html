@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8" />
+<title>Turing Party</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" media="all" href="style.css" />
+
+</head>
+
+<body>
+
+<article id="game">
+	<section id="playerlist">
+		<ul>
+			<li>Penguin</li>
+			<li>Koala</li>
+			<li>Cow</li>
+			<li>Horse</li>
+			<li>Whale</li>
+			<li>Frog</li>
+			<li>Panda</li>
+			<li>Dog</li>
+		</ul>
+	</section>
+	
+	<section id="chat">
+		<p class="right">
+			<input type="checkbox" id="ready_to_vote" /><label for="ready_to_vote">Ready to vote</label>
+		</p>
+		
+		<label><span class="avatar">&#x1F42E;</span> Cow <input type="text" id="message" name="message" autocomplete="off" placeholder="Send a message&hellip;" /></label>
+		<button id="send">Send</button>
+	</section>
+	
+	<section id="players">
+		<blockquote style="bottom:60%;left:20%">
+			<p class="message">What&rsquo;s your favorite color?</p>
+			<p class="name"><span class="avatar">&#x1F426;</span> Penguin</p>
+		</blockquote>
+		<blockquote style="bottom:60%;left:40%">
+			<p class="name"><span class="avatar">&#x1F428;</span> Panda</p>
+		</blockquote>
+		<blockquote style="bottom:60%;left:60%">
+			<p class="name"><span class="avatar">&#x1F42E;</span> Cow</p>
+		</blockquote>
+		<blockquote style="bottom:60%;left:80%">
+			<p class="message">That depends on how you ask.</p>
+			<p class="name"><span class="avatar">&#x1F434;</span> Horse</p>
+		</blockquote>
+		<blockquote style="bottom:20%;left:20%">
+			<p class="message">Blue. No! Yellow!</p>
+			<p class="name"><span class="avatar">&#x1F433;</span> Whale</p>
+		</blockquote>
+		
+		<blockquote style="bottom:20%;left:40%">
+			<p class="name"><span class="avatar">&#x1F438;</span> Frog</p>
+		</blockquote>
+		<blockquote style="bottom:20%;left:60%">
+			<p class="message">Beep beep detective</p>
+			<p class="name"><span class="avatar">&#x1F43C;</span> Panda</p>
+		</blockquote>
+		<blockquote style="bottom:20%;left:80%">
+			<p class="name"><span class="avatar">&#x1F436;</span> Dog</p>
+		</blockquote>
+	</section>
+</article>
+
+<!-- Uncomment for click and drag
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+
+<script type="text/javascript">
+// https://css-tricks.com/snippets/jquery/draggable-without-jquery-ui/
+(function($) {
+    $.fn.drags = function(opt) {
+
+        opt = $.extend({handle:"",cursor:"move"}, opt);
+
+        if(opt.handle === "") {
+            var $el = this;
+        } else {
+            var $el = this.find(opt.handle);
+        }
+
+        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if(opt.handle === "") {
+                var $drag = $(this).addClass('draggable');
+            } else {
+                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+            }
+            var z_idx = $drag.css('z-index'),
+                drg_h = $drag.outerHeight(),
+                drg_w = $drag.outerWidth(),
+                pos_y = $drag.offset().top + drg_h - e.pageY,
+                pos_x = $drag.offset().left + drg_w - e.pageX;
+            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                $('.draggable').offset({
+                    top:e.pageY + pos_y - drg_h,
+                    left:e.pageX + pos_x - drg_w
+                }).on("mouseup", function() {
+                    $(this).removeClass('draggable').css('z-index', z_idx);
+                });
+            });
+            e.preventDefault(); // disable selection
+        }).on("mouseup", function() {
+            if(opt.handle === "") {
+                $(this).removeClass('draggable');
+            } else {
+                $(this).removeClass('active-handle').parent().removeClass('draggable');
+            }
+        });
+
+    }
+})(jQuery);
+$('blockquote').drags();
+</script> -->
+
+
+</body>
+</html>
