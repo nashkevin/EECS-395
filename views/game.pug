@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1 #{title}
+	input(
+		id='chatInput'
+		type='text'
+		maxlength='80'
+		placeholder='Send a message'
+	)
+	button#submit Post
+	div#chat
+
+	script(src='javascript/game.js')
