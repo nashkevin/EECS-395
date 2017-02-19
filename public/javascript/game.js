@@ -12,7 +12,7 @@ function joinGame() {
 		return;
 	}
 	// Create a new instance of the websocket
-	var url = "ws://" + window.location.host + "/socket";
+	var url = "ws://" + window.location.host;
 	webSocket = new WebSocket(url);
 
 	/** Binds functions to the listeners for the websocket */

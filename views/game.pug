@@ -2,13 +2,15 @@ extends layout
 
 block content
 	h1 #{title}
-	input(
-		id='chatInput'
-		type='text'
-		maxlength='80'
-		placeholder='Send a message'
-	)
-	button#submit Post
+	form(action='javascript:sendChatMessage();')
+		input(
+			id='chatInput'
+			type='text'
+			maxlength='80'
+			placeholder='Send a message'
+			autocomplete='false'
+		)
+		button#submit(type='submit') Post
 	div#chat
 
 	script(src='javascript/game.js')
