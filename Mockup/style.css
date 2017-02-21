@@ -33,7 +33,12 @@ button:active{position:relative;top:1px}
 #players blockquote p.message::after{content:"";position:absolute;bottom:-.8em;left:52%;
 	border-left: 1em solid transparent;border-right: 1em solid transparent;border-top: 1em solid #FFF;}
 
-#players blockquote span.avatar{font-size:2em;vertical-align:middle}
+#players blockquote img.avatar {
+	vertical-align:middle;
+	height:3.5em;
+	width:auto;
+}
+
 #players blockquote p.name{text-align:center;margin:0;padding:0}
 
 
