@@ -23,7 +23,7 @@ button:active{position:relative;top:1px}
 #splash button,#select button{font-size:1.25em;padding:.25em .5em}
 
 #playerlist,#chat{background:rgba(0, 0, 0, .3);}
-#playerlist{width:10em;position:fixed;left:0;top:0;bottom:0;overflow-y:scroll}
+#playerlist{width:10em;position:fixed;left:0;top:0;bottom:0}
 #playerlist ul{padding-right:1em;}
 
 #chat{position:fixed;left:10em;bottom:0;right:0;padding:1em}
