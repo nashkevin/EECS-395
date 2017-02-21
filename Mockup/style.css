@@ -45,3 +45,21 @@ button:active{position:relative;top:1px}
 #voting input[type="checkbox"] + label:after{text-indent:0}
 #voting button{margin-top:1em}
 
+#prompt{position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);text-align:center;
+	background:#0A7;box-shadow:.5em .5em .75em rgba(0, 0, 0, .25);
+	border-radius:16px;margin:0;padding:0;max-width:75%;z-index:200;}
+#prompt p{padding:.5em 1em;margin:0;font-size:1.5em}
+
+
+.fadein{animation:fadein 2s}
+.fadeout{animation:fadeout 2s;font-size:0}
+
+
+@keyframes fadein {
+	from {opacity:0;font-size:0}
+	to {opacity:1;font-size:1em}
+}
+@keyframes fadeout {
+	from {opacity:1;font-size:1em}
+	to {opacity:0;font-size:0}
+}
