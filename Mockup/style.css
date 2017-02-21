@@ -52,6 +52,17 @@ button:active{position:relative;top:1px}
 .fadeout{animation:fadeout 2s;font-size:0}
 
 
+.noselect { /* Best attempt at cross-browser unselectable text */
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+
 @keyframes fadein {
 	from {opacity:0;font-size:0}
 	to {opacity:1;font-size:1em}
