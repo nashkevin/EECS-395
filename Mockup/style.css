@@ -22,15 +22,12 @@ button:active{position:relative;top:1px}
 #splash h1{font-size:3em}
 #splash button,#select button{font-size:1.25em;padding:.25em .5em}
 
-#playerlist,#chat{background:rgba(0, 0, 0, .3);}
-#playerlist{width:10em;position:fixed;left:0;top:0;bottom:0}
-#playerlist ul{padding-right:1em;}
+#chat{background:rgba(0, 0, 0, .3);}
 
-#chat{position:fixed;left:10em;bottom:0;right:0;padding:1em}
+#chat{position:fixed;left:0;bottom:0;right:0;padding:1em}
 #chat input[type="checkbox"]:checked + label:after{content:"✓";color:#00996b;line-height:1.3}
 .right{float:right;margin:0;padding:.25em 0 0}
 
-#players{margin-left:10em}
 #players blockquote{width:16em;margin:0;padding:0;position:fixed;font-size:.8em;}
 #players blockquote p.message{background:#FFF;color:#444;border-radius:1em;padding:1em;position:relative;margin:0 0 .5em;text-align:center;}
 #players blockquote p.message::after{content:"";position:absolute;bottom:-.8em;left:52%;
