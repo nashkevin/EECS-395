@@ -123,7 +123,7 @@ button:active {
 	font-size: .8em;
 	display: inline-block;
 	margin: 3vh 2%;
-	padding: 9em 0 0;
+	padding: 9em 0 0; /* Leave room for the speech bubbles */
 }
 
 #players blockquote p.name {
