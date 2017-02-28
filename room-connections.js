@@ -3,6 +3,9 @@ const WebSocket = require('ws');
 
 var wss;
 
+// Set of sockets to clients.
+var room = new Set();
+
 /* Initializes the WebSocket on the given server. */
 function start(server) {
 	wss = new WebSocket.Server({ server, perMessageDeflate: false });
@@ -10,24 +13,30 @@ function start(server) {
 }
 
 /* Called when a client connects to the WebSocket. */
-function onConnection(ws) {
-	const location = url.parse(ws.upgradeReq.url, true);
+function onConnection(client) {
+	// Set the event listeners.
+	client.on('message', function(message) {onIncomingMessage(message, client)});
+	client.on('close', function(message) {onClose(message, client)});
 
-	// On message received from client
-	ws.on('message', function(message) {onIncomingMessage(message, ws)});
+	// Keep track of the newly joined client.
+	room.add(client);
 
-	// When each client first connects
-	ws.send('Connection opened.');
+	client.send('Connection opened.');
 }
 
 /* Called when the server receives a message from a client. */
-function onIncomingMessage(message, ws) {
+function onIncomingMessage(message, sendingClient) {
 	// Broadcast the echoed message
-	wss.clients.forEach(function each(client) {
+	room.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(message);
 		}
 	});
+}
+
+/* Called when a client closes the WebSocket connection. */
+function onClose(code, reason, client) {
+	room.delete(client);
 }
 
 
