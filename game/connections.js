@@ -76,7 +76,7 @@ function broadcastText(sender, message) {
 
 /* Called when a client closes the WebSocket connection. */
 function onClose(code, reason, client) {
-    var room = clientToRoom(client);
+    var room = clientToRoom.get(client);
 	room.remove(client);
     clientToRoom.delete(client);
 }

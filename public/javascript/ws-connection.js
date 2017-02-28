@@ -47,8 +47,8 @@ function handleJson(json) {
     }
 
     if (json.playerMessage) {
-        var id = json.playerMessage[0];
-        var message = json.playerMessage[1];
+        var id = json.playerMessage.id;
+        var message = json.playerMessage.message;
         var speechBubble = document.getElementById("player" + id + "message");
         speechBubble.innerHTML = message;
     }

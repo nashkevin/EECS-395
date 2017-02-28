@@ -50,7 +50,7 @@ method.broadcast = function(message, sender) {
     var payload = message;
     if (sender) {
         var id = this._playerToId.get(sender);
-        payload = JSON.stringify({"playerMessage": [id, message]});
+        payload = JSON.stringify({"playerMessage": {"id": id, "message": message}});
     }
     this.members.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
