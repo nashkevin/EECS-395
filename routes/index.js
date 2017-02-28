@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Turing Party' });
+  res.render('index');
 });
 
 /* Mode selection page. */
@@ -26,9 +26,15 @@ router.get('/join-random', function(req, res, next) {
   res.render('join-random');
 });
 
-/* Gameplay page. */
+/* Gameplay page components. Should be called with AJAX. */
 router.get('/game', function(req, res, next) {
-  res.render('game', { title: 'Turing Party' });
+  res.render('game');
+});
+
+/* If people directly try to access /play, redirect them home.
+ * This URL is displayed when playing the game. */
+router.get('/play', function(req, res, next) {
+  res.redirect('/');
 });
 
 module.exports = router;

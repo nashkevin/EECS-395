@@ -3,3 +3,7 @@ extends layout
 block content
     article#select
         h1 Connecting&hellip;
+
+    script(src='javascript/ws-connection.js')
+    script.
+        window.onload = joinRandom

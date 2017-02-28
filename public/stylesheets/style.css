@@ -11,6 +11,11 @@ h1,h2,h3,h4,h5,h6 {
 	font-weight: 400;
 }
 
+article {
+	margin: 0;
+	padding: 0;
+}
+
 input[type="text"] {
 	background: rgba(255,255,255,.1);
 	border: 1px solid rgba(255,255,255,.5);
@@ -133,7 +138,7 @@ button:active {
 	padding:  0;
 }
 
-#players blockquote p.message {
+#players blockquote p.message:not(:empty) {
 	background: #FFF;
 	color: #444;
 	border-radius: 1em;
@@ -144,7 +149,7 @@ button:active {
 	padding: 1em;
 }
 
-#players blockquote p.message::after {
+#players blockquote p.message:not(:empty)::after {
 	content: "";
 	position: absolute;
 	bottom: -.8em;

@@ -1,16 +1,37 @@
-extends layout
-
 block content
-	h1 #{title}
-	form(action='javascript:sendChatMessage();')
-		input(
-			id='chatInput'
-			type='text'
-			maxlength='80'
-			placeholder='Send a message'
-			autocomplete='false'
-		)
-		button#submit(type='submit') Post
-	div#chat
+	- var avatars = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippopotamus', 'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
+	article#game
+		section#chat
+			p(
+				id='ready'
+				class='noselect'
+			)
+				input(
+					type='checkbox'
+					id='ready_to_vote'
+				)
+				label(for='ready_to_vote') Ready to vote
 
-	script(src='javascript/game.js')
+			form(action='javascript:sendChatMessage();')
+				label
+					img(src='images/players/' + avatars[0] + '.svg', class='avatar')
+					input(
+						type='text'
+						id='message'
+						name='message'
+						autocomplete='off'
+						maxlength=80
+						placeholder='Send a message...'
+					)
+				button#submit(type='submit') Send
+
+		section#players
+			- for (var i=0; i<8; i++)
+				blockquote
+					p.message
+					p.name
+						img(
+							class='avatar'
+							src='/images/players/' + avatars[i] + '.svg'
+						)
+						= avatars[i]

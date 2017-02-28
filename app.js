@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 
-var roomConnections = require('./room-connections');
+var roomConnections = require('./game/connections');
 
 var index = require('./routes/index');
 
