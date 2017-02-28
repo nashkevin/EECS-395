@@ -14,14 +14,14 @@ function onConnection(ws) {
 	const location = url.parse(ws.upgradeReq.url, true);
 
 	// On message received from client
-	ws.on('message', onIncomingMessage);
+	ws.on('message', function(message) {onIncomingMessage(message, ws)});
 
 	// When each client first connects
 	ws.send('Connection opened.');
 }
 
 /* Called when the server receives a message from a client. */
-function onIncomingMessage(message) {
+function onIncomingMessage(message, ws) {
 	// Broadcast the echoed message
 	wss.clients.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
