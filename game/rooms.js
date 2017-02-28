@@ -30,7 +30,7 @@ function getWaitingRoom() {
 /* Broadcasts a signal to all clients that the room is full and gameplay can begin. */
 function startGameplay(room) {
     waitingRooms.delete(room);
-    room.broadcast(JSON.stringify({'start': true}), null);
+    room.signalStart();
 }
 
 function addClientToRoom(client, room) {

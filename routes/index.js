@@ -27,8 +27,8 @@ router.get('/join-random', function(req, res, next) {
 });
 
 /* Gameplay page components. Should be called with AJAX. */
-router.get('/game', function(req, res, next) {
-  res.render('game');
+router.post('/game', function(req, res, next) {
+  res.render('game', { playerId: req.body.playerId});
 });
 
 /* If people directly try to access /play, redirect them home.

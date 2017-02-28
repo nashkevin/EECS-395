@@ -43,7 +43,7 @@ function onMessage(e) {
 /* Handles JSON from the server. */
 function handleJson(json) {
     if (json.start) {
-        proceedToGame();
+        proceedToGame(json.playerId);
     }
 
     if (json.playerMessage) {
@@ -88,7 +88,7 @@ function sendChatMessage() {
 
 /* The room is ready, so proceed to the game page. Use AJAX to persist the
  * WebSocket connection. */
-function proceedToGame() {
+function proceedToGame(playerId) {
     var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -98,6 +98,7 @@ function proceedToGame() {
             window.history.pushState(null, "", "/play"); // change URL
 		}
 	};
-	xmlhttp.open("GET", "/game", true);
-	xmlhttp.send();
+	xmlhttp.open("POST", "/game", true);
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	xmlhttp.send("playerId=" + playerId);
 }

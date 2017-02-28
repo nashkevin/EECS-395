@@ -59,4 +59,16 @@ method.broadcast = function(message, sender) {
 	});
 }
 
+/* Sends a message to each client that gameplay is starting. Also tell
+ * what player ID they are so they know which icon to use. */
+method.signalStart = function() {
+    var room = this; // "this" changes inside the loop
+    this.members.forEach(function each(client) {
+		if (client.readyState === WebSocket.OPEN) {
+            var obj = {'start': true, 'playerId': room._playerToId.get(client)};
+			client.send(JSON.stringify(obj));
+		}
+	});
+}
+
 module.exports = Room;
