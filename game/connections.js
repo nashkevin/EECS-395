@@ -1,7 +1,7 @@
 const url = require('url');
 const WebSocket = require('ws');
 
-var Room = require("./room");
+const Rooms = require('./rooms');
 
 // Enum of game modes.
 var Mode = {
@@ -11,13 +11,6 @@ var Mode = {
 };
 
 var wss;
-
-// All rooms currently active.
-var rooms = new Set();
-// All rooms still waiting to reach capacity.
-var waitingRooms = new Set();
-// Map from each client to what room they are in.
-var clientToRoom = new WeakMap();
 
 /* Initializes the WebSocket on the given server. */
 function start(server) {
@@ -29,7 +22,7 @@ function start(server) {
 function onConnection(client) {
 	// Set the event listeners.
 	client.on('message', function(message) {onIncomingMessage(message, client)});
-	client.on('close', function(message) {onClose(message, client)});
+	client.on('close', onClose);
 
 	client.send('Connection opened.');
 }
@@ -70,43 +63,20 @@ function handleClientJson(client, json) {
 
 /* Broadcast text to all the clients in the sender's room. */
 function broadcastText(sender, message) {
-    var room = clientToRoom.get(sender);
+    var room = Rooms.getRoomOfClient(sender);
 	room.broadcast(message, sender);
 }
 
 /* Called when a client closes the WebSocket connection. */
-function onClose(code, reason, client) {
-    var room = clientToRoom.get(client);
-	room.remove(client);
-    clientToRoom.delete(client);
+function onClose(code, reason) {
+    console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
+    // Unfortunately, we cannot tell which client disconnected.
 }
 
 function joinRandom(client) {
     // Keep track of the newly joined client.
-    var room = getWaitingRoom();
-	room.add(client);
-    clientToRoom.set(client, room);
-    if (room.isFull()) {
-        startRoom(room);
-    }
-}
-
-function startRoom(room) {
-    waitingRooms.delete(room);
-    room.broadcast(JSON.stringify({'start': true}), null);
-}
-
-function getWaitingRoom() {
-    //TODO is there a potential for race conditions?
-    if (waitingRooms.size == 0) {
-        // Make a new room.
-        var room = new Room();
-        waitingRooms.add(room);
-        return room;
-    } else {
-        // Return a random room.
-        return [...waitingRooms][Math.floor(Math.random()*waitingRooms.size)];
-    }
+    var room = Rooms.getWaitingRoom();
+	Rooms.addClientToRoom(client, room);
 }
 
 
