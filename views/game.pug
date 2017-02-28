@@ -26,9 +26,9 @@ block content
 				button#submit(type='submit') Send
 
 		section#players
-			- for (var i=0; i<8; i++)
+			- for (var i=0; i<2; i++)
 				blockquote(id='player' + i)
-					p.message
+					p(id='player' + i + 'message', class='message')
 					p.name
 						img(
 							class='avatar'

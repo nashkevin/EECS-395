@@ -12,7 +12,7 @@ var Mode = {
 
 var wss;
 
-// All rooms currently in use.
+// All rooms currently active.
 var rooms = new Set();
 // All rooms still waiting to reach capacity.
 var waitingRooms = new Set();
@@ -76,6 +76,7 @@ function broadcastText(sender, message) {
 
 /* Called when a client closes the WebSocket connection. */
 function onClose(code, reason, client) {
+    var room = clientToRoom(client);
 	room.remove(client);
     clientToRoom.delete(client);
 }

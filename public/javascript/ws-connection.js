@@ -46,8 +46,11 @@ function handleJson(json) {
         proceedToGame();
     }
 
-    if (json.message) {
-        log(json.message);
+    if (json.playerMessage) {
+        var id = json.playerMessage[0];
+        var message = json.playerMessage[1];
+        var speechBubble = document.getElementById("player" + id + "message");
+        speechBubble.innerHTML = message;
     }
 }
 
