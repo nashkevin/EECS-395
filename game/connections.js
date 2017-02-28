@@ -12,8 +12,12 @@ var Mode = {
 
 var wss;
 
-// Set of sockets to clients.
-var room = new Room();
+// All rooms currently in use.
+var rooms = new Set();
+// All rooms still waiting to reach capacity.
+var waitingRooms = new Set();
+// Map from each client to what room they are in.
+var clientToRoom = new WeakMap();
 
 /* Initializes the WebSocket on the given server. */
 function start(server) {
@@ -66,18 +70,42 @@ function handleClientJson(client, json) {
 
 /* Broadcast text to all the clients in the sender's room. */
 function broadcastText(sender, message) {
-	room.broadcast(sender, message);
+    var room = clientToRoom.get(sender);
+	room.broadcast(message, sender);
 }
 
 /* Called when a client closes the WebSocket connection. */
 function onClose(code, reason, client) {
 	room.remove(client);
+    clientToRoom.delete(client);
 }
 
 function joinRandom(client) {
     // Keep track of the newly joined client.
+    var room = getWaitingRoom();
 	room.add(client);
-    client.send(JSON.stringify({'start': true}));
+    clientToRoom.set(client, room);
+    if (room.isFull()) {
+        startRoom(room);
+    }
+}
+
+function startRoom(room) {
+    waitingRooms.delete(room);
+    room.broadcast(JSON.stringify({'start': true}), null);
+}
+
+function getWaitingRoom() {
+    //TODO is there a potential for race conditions?
+    if (waitingRooms.size == 0) {
+        // Make a new room.
+        var room = new Room();
+        waitingRooms.add(room);
+        return room;
+    } else {
+        // Return a random room.
+        return [...waitingRooms][Math.floor(Math.random()*waitingRooms.size)];
+    }
 }
 
 

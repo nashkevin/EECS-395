@@ -27,7 +27,7 @@ block content
 
 		section#players
 			- for (var i=0; i<8; i++)
-				blockquote
+				blockquote(id='player' + i)
 					p.message
 					p.name
 						img(
