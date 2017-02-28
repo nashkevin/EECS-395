@@ -119,6 +119,8 @@ button:active {
 	text-align: center;
 	position: fixed;
 	top: 50%;
+	left: 0;
+	right: 0;
 	transform: translateY(-50%);
 }
 
@@ -138,7 +140,11 @@ button:active {
 	padding:  0;
 }
 
-#players blockquote p.message:not(:empty) {
+#players blockquote p.message:empty {
+	/* Prevent the empty speech bubble from showing up. */
+	padding: 0;
+}
+#players blockquote p.message {
 	background: #FFF;
 	color: #444;
 	border-radius: 1em;

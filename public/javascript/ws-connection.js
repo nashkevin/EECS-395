@@ -51,7 +51,12 @@ function handleJson(json) {
         var message = json.playerMessage.message;
         var speechBubble = document.getElementById("player" + id + "message");
         speechBubble.innerHTML = message;
+        setTimeout(function() { fade(speechBubble); }, 2000);
     }
+}
+
+function fade(element) {
+    element.innerHTML = "";
 }
 
 /* Event listener for when the WebSocket is closed. */
