@@ -13,6 +13,7 @@ function getRoomOfClient(client) {
     return clientToRoom.get(client);
 }
 
+/* Returns a room that is not full yet and still looking for players. */
 function getWaitingRoom() {
     //TODO is there a potential for race conditions?
     if (waitingRooms.size == 0) {
@@ -26,7 +27,8 @@ function getWaitingRoom() {
     }
 }
 
-function startRoom(room) {
+/* Broadcasts a signal to all clients that the room is full and gameplay can begin. */
+function startGameplay(room) {
     waitingRooms.delete(room);
     room.broadcast(JSON.stringify({'start': true}), null);
 }
@@ -35,7 +37,7 @@ function addClientToRoom(client, room) {
     room.add(client);
     clientToRoom.set(client, room);
     if (room.isFull()) {
-        startRoom(room);
+        startGameplay(room);
     }
 }
 
