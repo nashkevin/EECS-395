@@ -48,7 +48,7 @@ function onIncomingMessage(message, client) {
 function handleClientJson(client, json) {
 	if (json.mode) {
         if (json.mode == Mode.START_ROOM) {
-            //TODO
+            startRoomWithFriends(client);
 		} else if (json.mode == Mode.JOIN_ROOM) {
             //TODO
 		} else if (json.mode == Mode.JOIN_RANDOM) {
@@ -77,6 +77,20 @@ function joinRandom(client) {
     // Keep track of the newly joined client.
     var room = Rooms.getWaitingRoom();
 	Rooms.addClientToRoom(client, room);
+}
+
+function startRoomWithFriends(client) {
+    var code = Rooms.newRoomCode();
+    var room = Rooms.getRoomByCode(code);
+    Rooms.addClientToRoom(client, room);
+    sendCodeToClient(code, client);
+}
+
+function sendCodeToClient(code, client) {
+    var payload = {'roomCode': code};
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(payload));
+    }
 }
 
 

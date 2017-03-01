@@ -46,6 +46,12 @@ function handleJson(json) {
         proceedToGame(json.playerId);
     }
 
+    if (json.roomCode) {
+        document.getElementById("beforeStartRoom").classList.add("hidden");
+        document.getElementById("roomInfo").classList.remove("hidden");
+        document.getElementById("roomCode").innerHTML = json.roomCode;
+    }
+
     if (json.playerMessage) {
         var id = json.playerMessage.id;
         var message = json.playerMessage.message;
@@ -68,6 +74,13 @@ function onClose(e) {
 
 function log(message) {
     console.log(message);
+}
+
+/* Function to start a game by creating a new room with friends. */
+function startRoomWithFriends() {
+    connect(function(e) {
+        webSocket.send(JSON.stringify({ "mode": Mode.START_ROOM }));
+    });
 }
 
 /* Function to start a game by joining a random room. */

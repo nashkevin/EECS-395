@@ -11,6 +11,10 @@ h1,h2,h3,h4,h5,h6 {
 	font-weight: 400;
 }
 
+h1 {
+	font-size: 2em;
+}
+
 article {
 	margin: 0;
 	padding: 0;
@@ -235,6 +239,10 @@ img.avatar {
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
+}
+
+.hidden {
+	display: none;
 }
 
 
