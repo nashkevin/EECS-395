@@ -6,6 +6,7 @@ var Room = require("./room");
 var waitingRooms = new Set();
 // Map of all rooms that are joinable by code.
 var codeToRoom = new Map();
+var roomToCode = new Map();
 // Map from each client to what room they are in.
 var clientToRoom = new Map();
 
@@ -13,6 +14,7 @@ function newRoomCode() {
     var room = new Room();
     var code = generateCode();
     codeToRoom.set(code, room);
+    roomToCode.set(room, code);
     return code;
 }
 
@@ -27,7 +29,11 @@ function generateCode() {
 }
 
 function getRoomByCode(code) {
-    return codeToRoom.get(code);
+    return codeToRoom.get(parseInt(code));
+}
+
+function isValidCode(code) {
+    return codeToRoom.has(parseInt(code));
 }
 
 function getRoomOfClient(client) {
@@ -50,7 +56,14 @@ function getWaitingRoom() {
 
 /* Broadcasts a signal to all clients that the room is full and gameplay can begin. */
 function startGameplay(room) {
+    // Remove the room from any lists of pending rooms.
     waitingRooms.delete(room);
+    if (roomToCode.has(room)) {
+        var code = roomToCode.get(room);
+        roomToCode.delete(room);
+        codeToRoom.delete(code);
+    }
+
     room.signalStart();
 }
 
@@ -72,6 +85,7 @@ function removeClientFromRoom(client) {
 module.exports = {
     newRoomCode: newRoomCode,
     getRoomByCode: getRoomByCode,
+    validCode: isValidCode,
     getRoomOfClient: getRoomOfClient,
     getWaitingRoom: getWaitingRoom,
     addClientToRoom: addClientToRoom,

@@ -46,10 +46,19 @@ function handleJson(json) {
         proceedToGame(json.playerId);
     }
 
+    if (json.error) {
+        alert(json.error);
+    }
+
     if (json.roomCode) {
         document.getElementById("beforeStartRoom").classList.add("hidden");
         document.getElementById("roomInfo").classList.remove("hidden");
         document.getElementById("roomCode").innerHTML = json.roomCode;
+    }
+
+    if (json.joinedRoom) {
+        document.getElementById("beforeJoinRoom").classList.add("hidden");
+        document.getElementById("afterJoinRoom").classList.remove("hidden");
     }
 
     if (json.playerMessage) {
@@ -81,6 +90,22 @@ function startRoomWithFriends() {
     connect(function(e) {
         webSocket.send(JSON.stringify({ "mode": Mode.START_ROOM }));
     });
+}
+
+/* Function to join a friend's room by room code. */
+function joinRoomWithFriends() {
+    var code = document.getElementById("roomCode").value;
+    var sendCode = function() {
+        webSocket.send(JSON.stringify({ "mode": Mode.JOIN_ROOM, "roomCode": code}));
+    };
+
+    if (webSocket === undefined || webSocket.readyState === WebSocket.CLOSED) {
+        // If the WebSocket isn't active yet, connect and send the code.
+        connect(sendCode);
+    } else {
+        // If the WebSocket connection already exists, send the code.
+        sendCode();
+    }
 }
 
 /* Function to start a game by joining a random room. */

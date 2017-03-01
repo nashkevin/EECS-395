@@ -2,4 +2,25 @@ extends layout
 
 block content
     article#select
-        h1 Coming soon!
+        section#beforeJoinRoom
+            h1 Join a Room with Friends
+            form(action='javascript:joinRoomWithFriends();')
+                p
+                    label
+                        | Enter a room code:
+                        br
+                        input(
+                            id='roomCode'
+                            type='text'
+                            maxLength=4
+                        )
+
+                button(type='submit') Join
+        section(
+            id='afterJoinRoom'
+            class='hidden'
+        )
+            h1 Room Joined
+            p Waiting for more friends to join&hellip;
+
+    script(src='javascript/ws-connection.js')

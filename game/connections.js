@@ -50,7 +50,7 @@ function handleClientJson(client, json) {
         if (json.mode == Mode.START_ROOM) {
             startRoomWithFriends(client);
 		} else if (json.mode == Mode.JOIN_ROOM) {
-            //TODO
+            joinRoomWithFriends(client, json.roomCode);
 		} else if (json.mode == Mode.JOIN_RANDOM) {
             joinRandom(client);
 		}
@@ -90,6 +90,30 @@ function sendCodeToClient(code, client) {
     var payload = {'roomCode': code};
     if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(payload));
+    }
+}
+
+function joinRoomWithFriends(client, roomCode) {
+    if (Rooms.validCode(roomCode)) {
+        var room = Rooms.getRoomByCode(roomCode);
+        Rooms.addClientToRoom(client, room);
+        sendJoinReceipt(client);
+    } else {
+        // If we can't find the room, display an error to the user.
+        clientError(client, "That room does not exist.");
+    }
+}
+
+// Tell the client that they have successfully joined a room.
+function sendJoinReceipt(client) {
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({"joinedRoom": true}));
+    }
+}
+
+function clientError(client, message) {
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({"error": message}));
     }
 }
 

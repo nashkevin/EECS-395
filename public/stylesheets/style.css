@@ -23,8 +23,17 @@ article {
 input[type="text"] {
 	background: rgba(255,255,255,.1);
 	border: 1px solid rgba(255,255,255,.5);
-	width: 20em;
 	padding: .125em .25em;
+}
+
+input[type="text"]#chat {
+	width: 20em;
+}
+
+input[type="text"]#roomCode {
+	width: 4em;
+	text-align: center;
+	font-size: 1.25em;
 }
 
 input[type="checkbox"] {
