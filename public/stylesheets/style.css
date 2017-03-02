@@ -153,9 +153,13 @@ button:active {
 	padding:  0;
 }
 
+#players blockquote p.message, #players blockquote p.message::after {
+	transition: .2s all ease;
+}
+
 #players blockquote p.message:empty {
 	/* Prevent the empty speech bubble from showing up. */
-	padding: 0;
+	background: transparent;
 }
 #players blockquote p.message {
 	background: #FFF;
@@ -170,10 +174,14 @@ button:active {
 	padding: 1em;
 }
 
-#players blockquote p.message:not(:empty)::after {
+#players blockquote p.message:empty::after {
+	border-top-color: transparent;
+}
+
+#players blockquote p.message::after {
 	content: "";
 	position: absolute;
-	bottom: -.8em;
+	bottom: -.9em;
 	left: 35%;
 	border-left: 1em solid transparent;
 	border-right: 1em solid transparent;
