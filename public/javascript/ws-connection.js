@@ -66,7 +66,8 @@ function handleJson(json) {
         var message = json.playerMessage.message;
         var speechBubble = document.getElementById("player" + id + "message");
         speechBubble.innerHTML = message;
-        setTimeout(function() { fadeBubble(speechBubble, message); }, 2000);
+        var timeout = 2000 + 40 * message.length;
+        setTimeout(function() { fadeBubble(speechBubble, message); }, timeout);
     }
 }
 
