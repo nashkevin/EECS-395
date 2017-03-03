@@ -9,9 +9,12 @@ block content
 			)
 				input(
 					type='checkbox'
-					id='ready_to_vote'
+					id='readyToVote'
+					onChange='sendReadyToVote();'
 				)
-				label(for='ready_to_vote') Ready to vote
+				label(
+					for='readyToVote'
+				) Ready to vote
 
 			form(action='javascript:sendChatMessage();')
 				label

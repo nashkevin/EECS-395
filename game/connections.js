@@ -56,6 +56,10 @@ function handleClientJson(client, json) {
 		}
 	}
 
+    if (json.hasOwnProperty('readyToVote')) {
+        Rooms.setPlayerAsReady(client, json.readyToVote);
+    }
+
 	if (json.message) {
 		broadcastText(client, json.message);
 	}

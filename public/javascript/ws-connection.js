@@ -46,6 +46,10 @@ function handleJson(json) {
         proceedToGame(json.playerId);
     }
 
+    if (json.startVoting) {
+        proceedToVoting();
+    }
+
     if (json.error) {
         alert(json.error);
     }
@@ -124,6 +128,11 @@ function sendChatMessage() {
     message.value = "";
 }
 
+function sendReadyToVote() {
+    var ready = document.getElementById("readyToVote").checked;
+    webSocket.send(JSON.stringify({ "readyToVote": ready }));
+}
+
 
 /* The room is ready, so proceed to the game page. Use AJAX to persist the
  * WebSocket connection. */
@@ -140,4 +149,9 @@ function proceedToGame(playerId) {
 	xmlhttp.open("POST", "/game", true);
     xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	xmlhttp.send("playerId=" + playerId);
+}
+
+function proceedToVoting() {
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("voting").classList.remove("hidden");
 }

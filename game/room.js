@@ -8,6 +8,8 @@ var method = Room.prototype;
 
 function Room(maxSize) {
     this.members = new Set();
+    // Maps from client to a boolean of whether or not they are ready.
+    this.readyMap = new Map();
     if (maxSize) {
         this.maxSize = maxSize;
     } else {
@@ -69,6 +71,31 @@ method.signalStart = function() {
 			client.send(JSON.stringify(obj));
 		}
 	});
+}
+
+/* Mark a player as ready to vote. */
+method.setPlayerAsReady = function(client, isReady) {
+    this.readyMap.set(client, isReady);
+    if (this.isReadyToVote()) {
+        this.signalVote();
+    }
+}
+
+method.isReadyToVote = function() {
+    // If every member is ready to vote, return true. False otherwise.
+    var readyMap = this.readyMap;
+    var ready = true;
+    this.members.forEach(function each(client) {
+		if (!readyMap.has(client) || !readyMap.get(client)) {
+            ready = false;
+        }
+	});
+    return ready;
+}
+
+/* Broadcast to each player that we are ready to vote. */
+method.signalVote = function() {
+    this.broadcast(JSON.stringify({'startVoting': true}));
 }
 
 module.exports = Room;

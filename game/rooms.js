@@ -81,6 +81,12 @@ function removeClientFromRoom(client) {
     clientToRoom.delete(client);
 }
 
+/* Mark the player as ready to vote. */
+function setPlayerAsReady(client, isReady) {
+    var room = clientToRoom.get(client);
+    room.setPlayerAsReady(client, isReady);
+}
+
 
 module.exports = {
     newRoomCode: newRoomCode,
@@ -89,5 +95,6 @@ module.exports = {
     getRoomOfClient: getRoomOfClient,
     getWaitingRoom: getWaitingRoom,
     addClientToRoom: addClientToRoom,
-    removeClientFromRoom: removeClientFromRoom
+    removeClientFromRoom: removeClientFromRoom,
+    setPlayerAsReady: setPlayerAsReady
 };
