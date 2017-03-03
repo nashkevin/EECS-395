@@ -199,10 +199,10 @@ img.avatar {
 }
 
 #voting p {
-	width: 5em;
+	width: 10em;
 	position: relative;
 	text-indent: -1.5em;
-	margin: .5em auto;
+	margin: 1em auto;
 }
 
 #voting input[type="checkbox"] + label {
@@ -212,6 +212,7 @@ img.avatar {
 
 #voting input[type="checkbox"] + label:after {
 	text-indent: 0;
+	bottom: .8em;
 }
 
 #voting button {

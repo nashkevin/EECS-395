@@ -1,5 +1,6 @@
 block content
 	- var avatars = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippopotamus', 'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
+	- var playerCount = 2;
 	article#game
 		section#chat
 			p(
@@ -26,7 +27,7 @@ block content
 				button#submit(type='submit') Send
 
 		section#players
-			- for (var i=0; i<2; i++)
+			- for (var i=0; i<playerCount; i++)
 				blockquote(id='player' + i)
 					p(id='player' + i + 'message', class='message')
 					p.name
@@ -35,3 +36,23 @@ block content
 							src='/images/players/' + avatars[i] + '.svg'
 						)
 						= avatars[i]
+
+	article(
+		id='voting'
+		class='hidden'
+	)
+		h1 Identify the Robots
+		- for (var i=0; i<playerCount; i++)
+			p.name
+				input(
+					id='p' + i
+					type='checkbox'
+				)
+				label(for='p'+i)
+					img(
+						class='avatar'
+						src='/images/players/' + avatars[i] + '.svg'
+					)
+					= avatars[i]
+
+		button#submit(type='submit') Vote
