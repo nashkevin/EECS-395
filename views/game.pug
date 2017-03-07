@@ -19,6 +19,7 @@ block content
 			form(action='javascript:sendChatMessage();')
 				label
 					img(src='images/players/' + avatars[playerId] + '.svg', class='avatar')
+					| &nbsp;
 					input(
 						type='text'
 						id='message'
@@ -27,6 +28,7 @@ block content
 						maxlength=80
 						placeholder='Send a message...'
 					)
+				| &nbsp;
 				button#submit(type='submit') Send
 
 		section#players
@@ -38,7 +40,8 @@ block content
 							class='avatar'
 							src='/images/players/' + avatars[i] + '.svg'
 						)
-						= avatars[i]
+						| &nbsp;
+						= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
 
 	article(
 		id='voting'
@@ -56,6 +59,7 @@ block content
 						class='avatar'
 						src='/images/players/' + avatars[i] + '.svg'
 					)
-					= avatars[i]
+					| &nbsp;
+					= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
 
 		button#submit(type='submit') Vote
