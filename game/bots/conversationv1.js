@@ -28,9 +28,6 @@ method.send = function(message) {
 }
 
 method.respond = function(err, response) {
-    // As far as I know, I need to pass in the bot explicitly because "this"
-    // is a different object for whatever reason.
-
     if (err) {
         console.log('error:', err);
     } else {
