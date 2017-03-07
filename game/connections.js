@@ -60,6 +60,10 @@ function handleClientJson(client, json) {
         Rooms.setPlayerAsReady(client, json.readyToVote);
     }
 
+    if (json.ballot) {
+        //TODO
+    }
+
 	if (json.message) {
 		broadcastText(client, json.message);
 	}

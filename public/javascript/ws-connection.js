@@ -155,3 +155,26 @@ function proceedToVoting() {
     document.getElementById("game").classList.add("hidden");
     document.getElementById("voting").classList.remove("hidden");
 }
+
+function submitVotes() {
+    // Manually iterate because there's no way to JSONify a FormData element
+    // without using some fancy library.
+    var ballot = {};
+    var allInputs = document.getElementsByClassName("voteInput");
+    for (var input of allInputs) {
+        if (input.checked) {
+            ballot[input.name] = "robot";
+        } else {
+            ballot[input.name] = "human";
+        }
+    }
+
+    webSocket.send(JSON.stringify({ "ballot": ballot}));
+
+    waitForVotes();
+}
+
+function waitForVotes() {
+    document.getElementById("voting").classList.add("hidden");
+    document.getElementById("waitForVotes").classList.remove("hidden");
+}

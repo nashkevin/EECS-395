@@ -48,18 +48,32 @@ block content
 		class='hidden'
 	)
 		h1 Identify the Robots
-		- for (var i=0; i<playerCount; i++)
-			p.name
-				input(
-					id='p' + i
-					type='checkbox'
-				)
-				label(for='p'+i)
-					img(
-						class='avatar'
-						src='/images/players/' + avatars[i] + '.svg'
-					)
-					| &nbsp;
-					= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
+		form(
+			id='votingForm'
+			action='javascript:submitVotes();'
+		)
+			- for (var i=0; i<playerCount; i++)
+				- if (i != playerId)
+					p.name
+						input(
+							id='p' + i
+							name=i
+							type='checkbox'
+							value='robot'
+							class='voteInput'
+						)
+						label(for='p'+i)
+							img(
+								class='avatar'
+								src='/images/players/' + avatars[i] + '.svg'
+							)
+							| &nbsp;
+							= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
 
-		button#submit(type='submit') Vote
+			button#submit(type='submit') Vote
+
+	article(
+		id='waitForVotes'
+		class='hidden'
+	)
+		h1 Waiting for others to vote&hellip;
