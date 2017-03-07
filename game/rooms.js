@@ -15,6 +15,7 @@ function newRoomCode() {
     var code = generateCode();
     codeToRoom.set(code, room);
     roomToCode.set(room, code);
+    waitingRooms.add(room);
     return code;
 }
 
