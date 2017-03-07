@@ -68,7 +68,7 @@ function startGameplay(room) {
 }
 
 function addClientToRoom(client, room) {
-    room.add(client);
+    room.addHuman(client);
     clientToRoom.set(client, room);
     if (room.isFull()) {
         startGameplay(room);
