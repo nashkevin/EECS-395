@@ -2,6 +2,8 @@
 
 var Room = require("./room");
 
+var ConversationBot = require("./bots/conversationv1");
+
 // All rooms still waiting to reach capacity.
 var waitingRooms = new Set();
 // Map of all rooms that are joinable by code.
@@ -73,6 +75,8 @@ function addClientToRoom(client, room) {
     clientToRoom.set(client, room);
     if (room.isFull()) {
         startGameplay(room);
+    } else {
+        addBotsGradually(room, 12);
     }
 }
 
@@ -93,6 +97,25 @@ function submitBallot(client, ballot) {
     room.submitBallot(client, ballot);
 }
 
+// Gradually adds bots with a decaying frequency. Timeout value is in seconds.
+function addBotsGradually(room, timeout) {
+    //TODO this is an overly simplistic method of balancing humans and bots.
+    // Make it more sophisticated.
+    if (room.isFull()) {
+        startGameplay(room);
+    } else {
+        room.addBot(new ConversationBot(room));
+    }
+    if (room.isFull()) {
+        startGameplay(room);
+    } else {
+        // If the room is still not full after adding a bot, repeat.
+        setTimeout(function() {
+            addBotsGradually(room, timeout * 0.5);
+        }, timeout * 1000);
+    }
+}
+
 
 module.exports = {
     newRoomCode: newRoomCode,
@@ -103,5 +126,6 @@ module.exports = {
     addClientToRoom: addClientToRoom,
     removeClientFromRoom: removeClientFromRoom,
     setPlayerAsReady: setPlayerAsReady,
-    submitBallot: submitBallot
+    submitBallot: submitBallot,
+    startGameplay: startGameplay
 };

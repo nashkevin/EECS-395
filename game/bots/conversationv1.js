@@ -9,13 +9,21 @@ function ConversationBot(room) {
         "password": "uX8MIl44vAmx",
         "version_date": '2017-02-03'
     });
+
+    this.lastResponded = new Date().getTime();
+    this.cooldownDelay = 6000; // milliseconds
 }
 
 // Send a message to the bot.
 method.send = function(message) {
-    // Respond 90% of the time to questions or 50% of the time otherwise.
-    if ((message.includes("?") && Math.random() < 0.9) || Math.random() < 0.5) {
-        this.respond(message);
+    // Don't respond if it's too soon after the last response.
+    var now = new Date().getTime();
+    if ((now-this.lastResponded) > this.cooldownDelay) {
+        // Respond 50% of the time to questions or 20% of the time otherwise.
+        if ((message.includes("?") && Math.random() < 0.5) || Math.random() < 0.2) {
+            this.lastResponded = new Date().getTime();
+            this.respond(message);
+        }
     }
 }
 
@@ -30,7 +38,7 @@ method.respond = function(message) {
         }, function(err, response) {
             bot.handleReponse(err, response);
         })
-    }, 1000 + 1500 * Math.random());
+    }, 500 + 1500 * Math.random());
 }
 
 method.handleReponse = function(err, response) {

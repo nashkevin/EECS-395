@@ -1,11 +1,9 @@
 // Class definition for a Room.
 
-var ConversationBot = require("./bots/conversationv1");
-
 const WebSocket = require('ws');
 
 // Numbers of players (humans + robots)
-const MAX_SIZE = 3; //TODO this value is for testing.
+const MAX_SIZE = 8; //TODO this value is for testing.
 
 var method = Room.prototype;
 
@@ -55,12 +53,6 @@ method.addHuman = function(human) {
         var id = this._remainingPlayerIds.pop();
         this._playerToId.set(human, id);
         this._idToPlayer.set(id, human);
-
-        //TODO this is an overly simplistic method of balancing humans and bots.
-        // Make it more sophisticated.
-        if (!this.isFull()) {
-            this.addBot(new ConversationBot(this));
-        }
     } else {
         throw new Error("Room is already full.");
     }
