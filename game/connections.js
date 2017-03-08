@@ -61,7 +61,7 @@ function handleClientJson(client, json) {
     }
 
     if (json.ballot) {
-        //TODO
+        Rooms.submitBallot(client, json.ballot);
     }
 
 	if (json.message) {

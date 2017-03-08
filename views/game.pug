@@ -77,3 +77,22 @@ block content
 		class='hidden'
 	)
 		h1 Waiting for others to vote&hellip;
+
+	article(
+		id='results'
+		class='hidden'
+	)
+		h1 Results
+		dl
+			- for (var i=0; i<playerCount; i++)
+				dt
+					img(
+						class='avatar'
+						src='/images/players/' + avatars[i] + '.svg'
+					)
+					| &nbsp;
+					= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
+				dd
+					<span id="p!{i}-human"></span> votes for human,
+					<span id="p!{i}-robot"></span> votes for robot.
+					| &nbsp;Actually was <span id="p!{i}-identity"></span>.

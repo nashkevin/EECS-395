@@ -50,6 +50,10 @@ function handleJson(json) {
         proceedToVoting();
     }
 
+    if (json.results) {
+        proceedToResults(json.results);
+    }
+
     if (json.error) {
         alert(json.error);
     }
@@ -177,4 +181,19 @@ function submitVotes() {
 function waitForVotes() {
     document.getElementById("voting").classList.add("hidden");
     document.getElementById("waitForVotes").classList.remove("hidden");
+}
+
+function proceedToResults(results) {
+    console.log(results);
+    for (var playerId in results) {
+        var votes = results[playerId];
+
+        console.log("Looking for ID: " + "p" + playerId + "-identity");
+        document.getElementById("p" + playerId + "-identity").innerHTML = votes["identity"];
+        document.getElementById("p" + playerId + "-human").innerHTML = votes["human"];
+        document.getElementById("p" + playerId + "-robot").innerHTML = votes["robot"];
+    }
+
+    document.getElementById("waitForVotes").classList.add("hidden");
+    document.getElementById("results").classList.remove("hidden");
 }

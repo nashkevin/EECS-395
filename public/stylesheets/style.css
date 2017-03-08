@@ -86,7 +86,7 @@ button:active {
 	top: 1px;
 }
 
-#splash,#select,#voting,#waitForVotes {
+#splash,#select,#voting,#waitForVotes,#results {
 	position: absolute;
 	top: 40%;
 	left: 50%;

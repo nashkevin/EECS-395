@@ -38,6 +38,11 @@ function Room(maxSize) {
     this._remainingPlayerIds.sort(function() {return 0.5 - Math.random()});
 
     this._playerToId = new WeakMap();
+    this._idToPlayer = new Map();
+
+    // Maps from player to ballot. Ballots are maps from player IDs (as strings
+    // because JSON attributes are strings) to the string "human" or "robot".
+    this._ballots = new Map();
 }
 
 method.playerCount = function() {
@@ -47,7 +52,9 @@ method.playerCount = function() {
 method.addHuman = function(human) {
     if (!this.isFull()) {
         this.humans.add(human);
-        this._playerToId.set(human, this._remainingPlayerIds.pop());
+        var id = this._remainingPlayerIds.pop();
+        this._playerToId.set(human, id);
+        this._idToPlayer.set(id, human);
 
         //TODO this is an overly simplistic method of balancing humans and bots.
         // Make it more sophisticated.
@@ -62,7 +69,9 @@ method.addHuman = function(human) {
 method.addBot = function(bot) {
     if (!this.isFull()) {
         this.bots.add(bot);
-        this._playerToId.set(bot, this._remainingPlayerIds.pop());
+        var id = this._remainingPlayerIds.pop();
+        this._playerToId.set(bot, id);
+        this._idToPlayer.set(id, bot);
     } else {
         console.log("Room is already full, so bot will not be added.");
     }
@@ -74,8 +83,10 @@ method.remove = function(player) {
     } else {
         this.bots.delete(player);
     }
-    this._remainingPlayerIds.push(this._playerToId.get(player));
+    var id = this._playerToId.get(player);
+    this._remainingPlayerIds.push(id);
     this._playerToId.delete(player);
+    this._idToPlayer.delete(id);
 }
 
 method.isFull = function() {
@@ -136,6 +147,59 @@ method.isReadyToVote = function() {
 /* Broadcast to each player that we are ready to vote. */
 method.signalVote = function() {
     this.broadcast(JSON.stringify({'startVoting': true}));
+}
+
+method.submitBallot = function(client, ballot) {
+    this._ballots.set(client, ballot);
+    if (this.everyoneHasVoted()) {
+        this.broadcastResults();
+    }
+}
+
+method.everyoneHasVoted = function() {
+    var ballots = this._ballots;
+    var ready = true;
+    this.humans.forEach(function each(client) {
+		if (!ballots.has(client)) {
+            ready = false;
+        }
+	});
+    return ready;
+}
+
+method.broadcastResults = function() {
+    var payload = JSON.stringify({"results": this.tallyVotes()});
+    this.humans.forEach(function each(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(payload);
+		}
+	});
+}
+
+method.tallyVotes = function() {
+    // Initialize the object of votes.
+    var results = {};
+    for (var id of this._idToPlayer.keys()) {
+        results[id] = {"human": 0, "robot": 0}; // vote count
+
+        if (this.humans.has(this._idToPlayer.get(id))) {
+            results[id]["identity"] = "human";
+        } else {
+            results[id]["identity"] = "robot";
+        }
+    }
+
+    for (var ballot of this._ballots.values()) {
+        for (var playerIdStr in ballot) {
+            var playerId = parseInt(playerIdStr);
+            var guess = ballot[playerIdStr];
+            if (guess == "human" || guess == "robot") {
+                results[playerId][guess]++;
+            }
+        }
+    }
+
+    return results;
 }
 
 module.exports = Room;

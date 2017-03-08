@@ -88,6 +88,11 @@ function setPlayerAsReady(client, isReady) {
     room.setPlayerAsReady(client, isReady);
 }
 
+function submitBallot(client, ballot) {
+    var room = clientToRoom.get(client);
+    room.submitBallot(client, ballot);
+}
+
 
 module.exports = {
     newRoomCode: newRoomCode,
@@ -97,5 +102,6 @@ module.exports = {
     getWaitingRoom: getWaitingRoom,
     addClientToRoom: addClientToRoom,
     removeClientFromRoom: removeClientFromRoom,
-    setPlayerAsReady: setPlayerAsReady
+    setPlayerAsReady: setPlayerAsReady,
+    submitBallot: submitBallot
 };
