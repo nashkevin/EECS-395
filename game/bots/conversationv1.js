@@ -13,7 +13,13 @@ function ConversationBot(room) {
 
 // Send a message to the bot.
 method.send = function(message) {
-    // Always responds.
+    // Respond 90% of the time to questions or 50% of the time otherwise.
+    if ((message.includes("?") && Math.random() < 0.9) || Math.random() < 0.5) {
+        this.respond(message);
+    }
+}
+
+method.respond = function(message) {
     var bot = this;
     var room = bot.room;
     setTimeout(function() {
@@ -22,12 +28,12 @@ method.send = function(message) {
             input: {'text': message},
             context: {}
         }, function(err, response) {
-            bot.respond(err, response);
+            bot.handleReponse(err, response);
         })
-      }, 2000);
+    }, 1000 + 1500 * Math.random());
 }
 
-method.respond = function(err, response) {
+method.handleReponse = function(err, response) {
     if (err) {
         console.log('error:', err);
     } else {
