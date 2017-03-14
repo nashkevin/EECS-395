@@ -205,4 +205,9 @@ method.tallyVotes = function() {
     return results;
 }
 
+/* Returns the ID of the player, which is also the player's display name. */
+method.getPlayerName = function(player) {
+    return this._playerToId.get(player);
+}
+
 module.exports = Room;

@@ -19,8 +19,11 @@ method.send = function(message) {
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
-        // Respond 50% of the time to questions or 20% of the time otherwise.
-        if ((message.includes("?") && Math.random() < 0.5) || Math.random() < 0.2) {
+        // Always respond if addressed. Respond 50% of the time to questions.
+        // Respond 20% of the time if we haven't responded already.
+        if ( (message.toLowerCase().includes(this.room.getPlayerName(this).toLowerCase()))
+                || (message.includes("?") && Math.random() < 0.5)
+                || Math.random() < 0.2 ) {
             this.lastResponded = new Date().getTime();
             this.respond(message);
         }
