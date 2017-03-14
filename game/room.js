@@ -6,7 +6,7 @@ const WebSocket = require('ws');
 const MAX_SIZE = 8;
 
 // Avatars identifying players. Each name refers to an image.
-const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippopotamus',
+const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippo',
     'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
 
 var method = Room.prototype;
