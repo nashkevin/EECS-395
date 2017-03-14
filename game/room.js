@@ -3,7 +3,11 @@
 const WebSocket = require('ws');
 
 // Numbers of players (humans + robots)
-const MAX_SIZE = 8; //TODO this value is for testing.
+const MAX_SIZE = 8;
+
+// Avatars identifying players. Each name refers to an image.
+const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippopotamus',
+    'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
 
 var method = Room.prototype;
 
@@ -25,21 +29,17 @@ function Room(maxSize) {
         this.maxSize = MAX_SIZE;
     }
 
-    // Each player will receive an ID between 0 and (size-1) upon joining the
-    // room. The IDs will be in random order, so that the first player to join
-    // isn't always player 0.
-    this._remainingPlayerIds = [];
-    for (var i=0; i<this.maxSize; i++) {
-        this._remainingPlayerIds.push(i);
-    }
+    // Each player will receive an ID (one of the avatar strings) upon joining
+    // the room. The IDs will be in random order.
+    this._remainingPlayerIds = AVATARS.slice();
     // Shuffle. https://css-tricks.com/snippets/javascript/shuffle-array/
     this._remainingPlayerIds.sort(function() {return 0.5 - Math.random()});
 
     this._playerToId = new WeakMap();
     this._idToPlayer = new Map();
 
-    // Maps from player to ballot. Ballots are maps from player IDs (as strings
-    // because JSON attributes are strings) to the string "human" or "robot".
+    // Maps from player to ballot. Ballots are maps from player IDs to the
+    // string "human" or "robot".
     this._ballots = new Map();
 }
 
@@ -110,10 +110,22 @@ method.signalStart = function() {
     var room = this; // "this" changes inside the loop
     this.humans.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
-            var obj = {'start': true, 'playerId': room._playerToId.get(client)};
+            var obj = {
+                'start': true,
+                'playerId': room._playerToId.get(client),
+                'players': JSON.stringify(room._shuffledPlayerIdList())
+            };
 			client.send(JSON.stringify(obj));
 		}
 	});
+}
+
+/* Randomize the order from insertion order (i.e. the order in which players
+ * joined the game). */
+method._shuffledPlayerIdList = function() {
+    var ids = [...this._idToPlayer.keys()];
+    ids.sort(function() {return 0.5 - Math.random()});
+    return ids;
 }
 
 /* Mark a player as ready to vote. */
@@ -182,9 +194,8 @@ method.tallyVotes = function() {
     }
 
     for (var ballot of this._ballots.values()) {
-        for (var playerIdStr in ballot) {
-            var playerId = parseInt(playerIdStr);
-            var guess = ballot[playerIdStr];
+        for (var playerId in ballot) {
+            var guess = ballot[playerId];
             if (guess == "human" || guess == "robot") {
                 results[playerId][guess]++;
             }

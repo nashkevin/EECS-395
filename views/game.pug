@@ -1,6 +1,4 @@
 block content
-	- var avatars = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippopotamus', 'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
-	- var playerCount = 8;
 	article#game
 		section#chat
 			p(
@@ -18,7 +16,7 @@ block content
 
 			form(action='javascript:sendChatMessage();')
 				label
-					img(src='images/players/' + avatars[playerId] + '.svg', class='avatar')
+					img(src='images/players/' + playerId + '.svg', class='avatar')
 					| &nbsp;
 					input(
 						type='text'
@@ -32,16 +30,16 @@ block content
 				button#submit(type='submit') Send
 
 		section#players
-			- for (var i=0; i<playerCount; i++)
-				blockquote(id='player' + i)
-					p(id='player' + i + 'message', class='message')
+			- for (var i=0; i<players.length; i++)
+				blockquote(id=players[i])
+					p(id=players[i] + 'Message', class='message')
 					p.name
 						img(
 							class='avatar'
-							src='/images/players/' + avatars[i] + '.svg'
+							src='/images/players/' + players[i] + '.svg'
 						)
 						| &nbsp;
-						= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
+						= players[i].charAt(0).toUpperCase() + players[i].slice(1)
 
 	article(
 		id='voting'
@@ -52,23 +50,23 @@ block content
 			id='votingForm'
 			action='javascript:submitVotes();'
 		)
-			- for (var i=0; i<playerCount; i++)
-				- if (i != playerId)
+			- for (var i=0; i<players.length; i++)
+				- if (players[i] != playerId)
 					p.name
 						input(
-							id='p' + i
-							name=i
+							id=players[i] + "Check"
+							name=players[i]
 							type='checkbox'
 							value='robot'
 							class='voteInput'
 						)
-						label(for='p'+i)
+						label(for=players[i] + "Check")
 							img(
 								class='avatar'
-								src='/images/players/' + avatars[i] + '.svg'
+								src='/images/players/' + players[i] + '.svg'
 							)
 							| &nbsp;
-							= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
+							= players[i].charAt(0).toUpperCase() + players[i].slice(1)
 
 			button#submit(type='submit') Vote
 
@@ -84,15 +82,15 @@ block content
 	)
 		h1 Results
 		dl
-			- for (var i=0; i<playerCount; i++)
+			- for (var i=0; i<players.length; i++)
 				dt
 					img(
 						class='avatar'
-						src='/images/players/' + avatars[i] + '.svg'
+						src='/images/players/' + players[i] + '.svg'
 					)
 					| &nbsp;
-					= avatars[i].charAt(0).toUpperCase() + avatars[i].slice(1)
+					= players[i].charAt(0).toUpperCase() + players[i].slice(1)
 				dd
-					<span id="p!{i}-human"></span> votes for human,
-					<span id="p!{i}-robot"></span> votes for robot.
-					| &nbsp;Actually was <span id="p!{i}-identity"></span>.
+					<span id="!{players[i]}Human"></span> votes for human,
+					<span id="!{players[i]}Robot"></span> votes for robot.
+					| &nbsp;Actually was <span id="!{players[i]}Identity"></span>.
