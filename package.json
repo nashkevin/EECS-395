@@ -13,6 +13,7 @@
     "morgan": "~1.7.0",
     "pug": "~2.0.0-beta10",
     "serve-favicon": "~2.3.2",
-    "watson-developer-cloud": "^2.25.1"
+    "watson-developer-cloud": "^2.25.1",
+    "ws": "^2.2.2"
   }
 }
