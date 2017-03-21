@@ -82,7 +82,21 @@ method.remove = function(player) {
 }
 
 method.isFull = function() {
+    // Make sure there aren't any disconnected players.
+    this.removeDisconnectedPlayers();
     return (this.playerCount() >= this.maxSize);
+}
+
+/* Remove players that are no longer connected (web socket status: closing
+ * or closed). */
+method.removeDisconnectedPlayers = function() {
+    var room = this;
+    this.humans.forEach(function each(client) {
+		if (client.readyState === WebSocket.CLOSING
+            || client.readyState === WebSocket.CLOSED) {
+			room.remove(client);
+		}
+	});
 }
 
 method.broadcast = function(message, sender) {
@@ -132,7 +146,12 @@ method._shuffledPlayerIdList = function() {
 method.setPlayerAsReady = function(client, isReady) {
     this.readyMap.set(client, isReady);
     if (this.isReadyToVote()) {
-        this.signalVote();
+        // Signal vote after a random delay so that it's not obvious for the
+        // last person who checked "ready to vote".
+        var that = this;
+        setTimeout(function() {
+            that.signalVote();
+        }, 5000 + Math.random() * 5000);
     }
 }
 
