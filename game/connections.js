@@ -1,6 +1,8 @@
 const url = require('url');
 const WebSocket = require('ws');
 
+var fs = require('fs'); // Node.js File System
+
 const Rooms = require('./rooms');
 
 // Enum of game modes.
@@ -73,6 +75,7 @@ function handleClientJson(client, json) {
 function broadcastText(sender, message) {
     var room = Rooms.getRoomOfClient(sender);
 	room.broadcast(message, sender);
+    fs.appendFile('./game/bots/recentmessages.txt', message + '\n', 'utf8');
 }
 
 /* Called when a client closes the WebSocket connection. */
