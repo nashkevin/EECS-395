@@ -82,7 +82,21 @@ method.remove = function(player) {
 }
 
 method.isFull = function() {
+    // Make sure there aren't any disconnected players.
+    this.removeDisconnectedPlayers();
     return (this.playerCount() >= this.maxSize);
+}
+
+/* Remove players that are no longer connected (web socket status: closing
+ * or closed). */
+method.removeDisconnectedPlayers = function() {
+    var room = this;
+    this.humans.forEach(function each(client) {
+		if (client.readyState === WebSocket.CLOSING
+            || client.readyState === WebSocket.CLOSED) {
+			room.remove(client);
+		}
+	});
 }
 
 method.broadcast = function(message, sender) {
