@@ -132,7 +132,12 @@ method._shuffledPlayerIdList = function() {
 method.setPlayerAsReady = function(client, isReady) {
     this.readyMap.set(client, isReady);
     if (this.isReadyToVote()) {
-        this.signalVote();
+        // Signal vote after a random delay so that it's not obvious for the
+        // last person who checked "ready to vote".
+        var that = this;
+        setTimeout(function() {
+            that.signalVote();
+        }, 5000 + Math.random() * 5000);
     }
 }
 
