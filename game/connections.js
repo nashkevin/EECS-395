@@ -27,8 +27,8 @@ function start(server) {
 /* Called when a client connects to the WebSocket. */
 function onConnection(client) {
 	// Set the event listeners.
-	client.on("message", function(message) {onIncomingMessage(message, client)});
-	client.on("close", onClose);
+	client.on('message', function(message) {onIncomingMessage(message, client)});
+	client.on('close', function(code, reason) {onClose(code, reason, client)});
 
 	client.send("Connection opened.");
 }
@@ -84,9 +84,16 @@ function broadcastText(sender, message) {
 }
 
 /* Called when a client closes the WebSocket connection. */
+<<<<<<< HEAD
 function onClose(code, reason) {
 	console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
 	// Unfortunately, we cannot tell which client disconnected.
+=======
+function onClose(code, reason, sender) {
+    var room = Rooms.getRoomOfClient(sender);
+    room.remove(sender);
+    console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
+>>>>>>> e47e200f665cb6aa65f9407439f4b1b588670db9
 }
 
 function joinRandom(client) {
