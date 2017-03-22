@@ -5,7 +5,8 @@ var Transform = require("stream").Transform; // Node.js Transform stream
 const util = require("util");
 const Rooms = require("./rooms");
 
-const FIVE_MEGABYTES = 5243000;
+/* The largest the message log is allowed to be, in bytes */
+const MAX_LOG_SIZE = 5243000;
 
 const messageHistory = "./game/bots/recentmessages.txt";
 
@@ -85,9 +86,9 @@ function broadcastText(sender, message) {
 
 /* Called when a client closes the WebSocket connection. */
 function onClose(code, reason, sender) {
-    var room = Rooms.getRoomOfClient(sender);
-    room.remove(sender);
-    console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
+	var room = Rooms.getRoomOfClient(sender);
+	room.remove(sender);
+	console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
 }
 
 function joinRandom(client) {
@@ -135,54 +136,12 @@ function clientError(client, message) {
 }
 
 function appendMessageToLog(filename, message) {
-	// Delete oldest messages, ten at a time
-	// until the size is below an arbitrary limit
-	while (fs.stat(filename).size > FIVE_MEGABYTES) {
-		removeFirstLines(filename, 10);
-	}
+	// if (fs.statSync(filename).size < MAX_LOG_SIZE) {
+		// Append the message to the text log of recent messages
+		fs.appendFile(filename, message + "\n", "utf8");
+	// }
 
-	// Append the message to the text log of recent messages
-	fs.appendFile(filename, message + "\n", "utf8");
 }
-
-function removeFirstLines(filename, numLines) {
-	for (var i = 0; i < numLines; i++) {
-		var input = fs.createReadStream(filename);
-		var output = fs.createWriteStream(filename);
-
-		input.pipe(RemoveFirstLine()).pipe(output);
-	}
-}
-
-function RemoveFirstLine(args) {
-    if (! (this instanceof RemoveFirstLine)) {
-        return new RemoveFirstLine(args);
-    }
-    Transform.call(this, args);
-    this._buff = '';
-    this._removed = false;
-}
-util.inherits(RemoveFirstLine, Transform);
-
-RemoveFirstLine.prototype._transform = function(chunk, encoding, done) {
-    if (this._removed) { // if already removed
-        this.push(chunk); // just push through buffer
-    } else {
-        // collect string into buffer
-        this._buff += chunk.toString();
-
-        // check if string has newline symbol
-        if (this._buff.indexOf('\n') !== -1) {
-            // push to stream skipping first line
-            this.push(this._buff.slice(this._buff.indexOf('\n') + 2));
-            // clear string buffer
-            this._buff = null;
-            // mark as removed
-            this._removed = true;
-        }
-    }
-    done();
-};
 
 
 module.exports = {start: start};
