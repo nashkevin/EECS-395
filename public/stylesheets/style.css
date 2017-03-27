@@ -263,6 +263,14 @@ img.avatar {
 	display: none;
 }
 
+.stacked-bar-graph {
+  width: 100%;
+  height: 38px;
+  color:#fff;
+
+}
+
+
 
 @keyframes fadein {
 	from {

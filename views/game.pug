@@ -80,7 +80,7 @@ block content
 		id='results'
 		class='hidden'
 	)
-		h1 Results
+		h1 Voting Results
 		dl
 			- for (var i=0; i<players.length; i++)
 				dt
@@ -89,8 +89,5 @@ block content
 						src='/images/players/' + players[i] + '.svg'
 					)
 					| &nbsp;
-					= players[i].charAt(0).toUpperCase() + players[i].slice(1)
-				dd
-					<span id="!{players[i]}Human"></span> votes for human,
-					<span id="!{players[i]}Robot"></span> votes for robot.
-					| &nbsp;Actually was <span id="!{players[i]}Identity"></span>.
+					#container.stacked-bar-graph
+						<span id="!{players[i]}Human" style="display:inline-block;background: #A93226;"></span><span id="!{players[i]}Robot" style="display:inline-block;background: #7D3C98;"></span>

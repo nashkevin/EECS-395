@@ -193,9 +193,11 @@ function proceedToResults(results) {
 	for (var playerId in results) {
 		var votes = results[playerId];
 
-		document.getElementById(playerId + "Identity").innerHTML = votes["identity"];
-		document.getElementById(playerId + "Human").innerHTML = votes["human"];
-		document.getElementById(playerId + "Robot").innerHTML = votes["robot"];
+		//document.getElementById(playerId + "Identity").innerHTML = votes["identity"];
+		document.getElementById(playerId + "Human").style.width = (((votes["human"]) / (votes["human"] + votes["robot"])) * 60) + "%";
+		document.getElementById(playerId + "Human").innerHTML = votes["human"] == 0 ? (((votes["human"]) / (votes["human"] + votes["robot"])) * 100) + "% Human" : "";
+		document.getElementById(playerId + "Robot").style.width = (((votes["robot"]) / (votes["human"] + votes["robot"])) * 60) + "%";
+		document.getElementById(playerId + "Robot").innerHTML = votes["human"] == 0 ? (((votes["robot"]) / (votes["human"] + votes["robot"])) * 100) + "% Robot" : "";
 	}
 
 	document.getElementById("waitForVotes").classList.add("hidden");
