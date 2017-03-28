@@ -266,6 +266,8 @@ method.promptIfInactive = function() {
 }
 
 method.sendPrompt = function() {
+    this._lastMessageTime = Date.now();
+
     // Get the first prompt from the list and then rotate it to the end of the list.
     var prompt = this._prompts[0];
     this._prompts.push(this._prompts.shift());
