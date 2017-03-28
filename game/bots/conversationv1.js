@@ -14,8 +14,8 @@ function ConversationBot(room) {
     this.cooldownDelay = 6000; // milliseconds
 }
 
-// Send a message to the bot.
-method.send = function(message) {
+// Send a message to the bot. The sender is optional.
+method.send = function(message, sender) {
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
