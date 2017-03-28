@@ -77,6 +77,14 @@ function handleJson(json) {
 		var timeout = 2000 + 40 * message.length;
 		setTimeout(function() { fadeBubble(speechBubble, message); }, timeout);
 	}
+
+	if (json.prompt) {
+		var message = json.prompt;
+		var promptBubble = document.getElementById("prompt");
+		promptBubble.innerHTML = message;
+		var timeout = 5000;
+		setTimeout(function() { fadeBubble(promptBubble, message); }, timeout);
+	}
 }
 
 function fadeBubble(element, startingContent) {
@@ -191,16 +199,15 @@ function waitForVotes() {
 
 function proceedToResults(results) {
 	var invSpeed = 60;
+	var i = 0;
 
 	for (var playerId in results) {
 		var votes = results[playerId];
 
 		var extendBar = function(player, bar) {
 			var vote = results[player];
-			log("here" + player);
 			var curVal = parseFloat(document.getElementById(player + bar).style.width);
-			var goalVal =  (vote[bar] / (vote["human"] + vote["robot"])) * 60;
-			log(curVal + ", " + goalVal);
+			var goalVal =  (vote[bar] / (vote["human"] + vote["robot"])) * 50;
 			if(curVal + 0.1 < goalVal) {
 				var nextVal = ((curVal * (invSpeed-1) + goalVal) / invSpeed) + "%";
 				document.getElementById(player + bar).style.width = nextVal;
@@ -211,11 +218,13 @@ function proceedToResults(results) {
 			}
 		}
 
-		//document.getElementById(playerId + "Identity").innerHTML = votes["identity"];
+		document.getElementById(playerId + "identity").src = "/images/results/" + votes["identity"] + ".svg";
 		setTimeout(extendBar, 5, playerId, "human");
 		document.getElementById(playerId + "human").innerHTML = votes["human"] != 0 ? Math.floor(((votes["human"]) / (votes["human"] + votes["robot"])) * 100) + "% Human" : " ";
 		setTimeout(extendBar, 5, playerId, "robot");
 		document.getElementById(playerId + "robot").innerHTML = votes["robot"] != 0 ? Math.floor(((votes["robot"]) / (votes["human"] + votes["robot"])) * 100) + "% Robot" : " ";
+
+		i++;
 	}
 
 	document.getElementById("waitForVotes").classList.add("hidden");

@@ -86,13 +86,17 @@ button:active {
 	top: 1px;
 }
 
-#splash,#select,#voting,#waitForVotes,#results {
+#splash, #select, #waitForVotes {
 	position: absolute;
 	top: 40%;
 	left: 50%;
 	transform: translate(-50%,-40%);
 	text-align: center;
 	width: 100%;
+}
+
+#voting, #results {
+	text-align: center;
 }
 
 #splash h1 {
@@ -148,9 +152,9 @@ button:active {
 
 #players blockquote p.name {
 	text-align: center;
-	font-size:  1.2em;
-	margin:  0;
-	padding:  0;
+	font-size: 1.2em;
+	margin: 0;
+	padding: 0;
 }
 
 #players blockquote p.message, #players blockquote p.message::after {
@@ -160,7 +164,12 @@ button:active {
 #players blockquote p.message:empty {
 	/* Prevent the empty speech bubble from showing up. */
 	background: transparent;
+	color: transparent;
 }
+#players blockquote p.message:empty::before {
+	content: "\00a0";
+}
+
 #players blockquote p.message {
 	background: #FFF;
 	color: #444;
@@ -198,6 +207,17 @@ img.avatar {
 	height: 2em;
 }
 
+#results img.avatar {
+	height: 2.5em;
+}
+
+img.avaType {
+	vertical-align: middle;
+	height: 2.5em;
+	opacity: 0;
+	animation: resultsFade 1s forwards;
+}
+
 #voting p {
 	width: 8em;
 	position: relative;
@@ -223,30 +243,30 @@ img.avatar {
 	position: fixed;
 	top: 50%;
 	left: 50%;
+	width: 35%;
 	transform: translate(-50%,-50%);
 	text-align: center;
 	background: #0A7;
+	opacity: .75; /* So that messages underneath aren't completely hidden */
 	box-shadow: .5em .5em .75em rgba(0,0,0,.25);
 	border-radius: 16px;
 	max-width: 75%;
 	z-index: 200;
-	margin: 0;
-	padding: 0;
-}
-
-#prompt p {
 	font-size: 1.5em;
 	margin: 0;
 	padding: .5em 1em;
+	transition: .5s all ease;
 }
 
-.fadein {
-	animation: fadein 2s;
-}
 
-.fadeout {
-	animation: fadeout 2s;
-	font-size: 0;
+#prompt:empty {
+	background: transparent;
+	color: transparent;
+	box-shadow:0 0 transparent;
+}
+#prompt:empty::after {
+	/* Add a &nbsp; so that the prompt doesn't suddenly shrink when fading. */
+	content:"\00a0";
 }
 
 .noselect {
@@ -266,6 +286,8 @@ img.avatar {
 .stacked-bar-graph {
   height: 38px;
   color:#fff;
+	margin-bottom: 0.45cm;
+	margin-top: 0.15cm;
 
   span {
     display: inline-block;
@@ -280,25 +302,11 @@ img.avatar {
   }
 }
 
-
-
-@keyframes fadein {
+@keyframes resultsFade {
 	from {
 		opacity: 0;
-		font-size: 0;
 	}
 	to {
 		opacity: 1;
-		font-size: 1em;
-	}
-}
-@keyframes fadeout {
-	from {
-		opacity: 1;
-		font-size: 1em;
-	}
-	to {
-		opacity: 0;
-		font-size: 0;
 	}
 }
