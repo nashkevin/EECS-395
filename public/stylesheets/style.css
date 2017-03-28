@@ -86,13 +86,17 @@ button:active {
 	top: 1px;
 }
 
-#splash,#select,#voting,#waitForVotes,#results {
+#splash, #select, #waitForVotes {
 	position: absolute;
 	top: 40%;
 	left: 50%;
 	transform: translate(-50%,-40%);
 	text-align: center;
 	width: 100%;
+}
+
+#voting, #results {
+	text-align: center;
 }
 
 #splash h1 {
