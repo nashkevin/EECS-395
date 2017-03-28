@@ -9,6 +9,15 @@ const MAX_SIZE = 8;
 const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippo',
     'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
 
+// Prompts that the game can display when players are quiet.
+const PROMPTS = [
+        "What's your favorite color?",
+        "Who do you think the bots are?",
+        "What's your favorite animal?",
+        "Did you see that ludicrous display last night?",
+        "What's your favorite superhero?"
+];
+
 // How long to wait after the most recent message before displaying a prompt.
 const PROMPT_WAITING_PERIOD_MS = 15 * 1000;
 
@@ -38,6 +47,10 @@ function Room(maxSize) {
     this._remainingPlayerIds = AVATARS.slice();
     // Shuffle. https://css-tricks.com/snippets/javascript/shuffle-array/
     this._remainingPlayerIds.sort(function() {return 0.5 - Math.random()});
+
+    // Randomize the prompts.
+    this._prompts = PROMPTS.slice();
+    this._prompts.sort(function() {return 0.5 - Math.random()});
 
     this._playerToId = new WeakMap();
     this._idToPlayer = new Map();
@@ -253,7 +266,10 @@ method.promptIfInactive = function() {
 }
 
 method.sendPrompt = function() {
-    var prompt = "What is your favorite color?"; //TODO
+    // Get the first prompt from the list and then rotate it to the end of the list.
+    var prompt = this._prompts[0];
+    this._prompts.push(this._prompts.shift());
+
     var payload = JSON.stringify({"prompt": prompt});
     this.humans.forEach(function each(client) {
 		if (client.readyState === WebSocket.OPEN) {
