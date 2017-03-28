@@ -190,14 +190,32 @@ function waitForVotes() {
 }
 
 function proceedToResults(results) {
+	var invSpeed = 60;
+
 	for (var playerId in results) {
 		var votes = results[playerId];
 
+		var extendBar = function(player, bar) {
+			var vote = results[player];
+			log("here" + player);
+			var curVal = parseFloat(document.getElementById(player + bar).style.width);
+			var goalVal =  (vote[bar] / (vote["human"] + vote["robot"])) * 60;
+			log(curVal + ", " + goalVal);
+			if(curVal + 0.1 < goalVal) {
+				var nextVal = ((curVal * (invSpeed-1) + goalVal) / invSpeed) + "%";
+				document.getElementById(player + bar).style.width = nextVal;
+				setTimeout(extendBar, 5, player, bar);
+			}
+			else {
+				document.getElementById(player + bar).style.width = goalVal + "%";
+			}
+		}
+
 		//document.getElementById(playerId + "Identity").innerHTML = votes["identity"];
-		document.getElementById(playerId + "Human").style.width = (((votes["human"]) / (votes["human"] + votes["robot"])) * 60) + "%";
-		document.getElementById(playerId + "Human").innerHTML = votes["human"] == 0 ? (((votes["human"]) / (votes["human"] + votes["robot"])) * 100) + "% Human" : "";
-		document.getElementById(playerId + "Robot").style.width = (((votes["robot"]) / (votes["human"] + votes["robot"])) * 60) + "%";
-		document.getElementById(playerId + "Robot").innerHTML = votes["human"] == 0 ? (((votes["robot"]) / (votes["human"] + votes["robot"])) * 100) + "% Robot" : "";
+		setTimeout(extendBar, 5, playerId, "human");
+		document.getElementById(playerId + "human").innerHTML = votes["human"] != 0 ? Math.floor(((votes["human"]) / (votes["human"] + votes["robot"])) * 100) + "% Human" : " ";
+		setTimeout(extendBar, 5, playerId, "robot");
+		document.getElementById(playerId + "robot").innerHTML = votes["robot"] != 0 ? Math.floor(((votes["robot"]) / (votes["human"] + votes["robot"])) * 100) + "% Robot" : " ";
 	}
 
 	document.getElementById("waitForVotes").classList.add("hidden");
