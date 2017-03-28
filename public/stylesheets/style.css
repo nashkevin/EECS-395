@@ -148,9 +148,9 @@ button:active {
 
 #players blockquote p.name {
 	text-align: center;
-	font-size:  1.2em;
-	margin:  0;
-	padding:  0;
+	font-size: 1.2em;
+	margin: 0;
+	padding: 0;
 }
 
 #players blockquote p.message, #players blockquote p.message::after {
@@ -160,7 +160,12 @@ button:active {
 #players blockquote p.message:empty {
 	/* Prevent the empty speech bubble from showing up. */
 	background: transparent;
+	color: transparent;
 }
+#players blockquote p.message:empty::before {
+	content: "\00a0";
+}
+
 #players blockquote p.message {
 	background: #FFF;
 	color: #444;
