@@ -198,6 +198,17 @@ img.avatar {
 	height: 2em;
 }
 
+#results img.avatar {
+	height: 2.5em;
+}
+
+img.avaType {
+	vertical-align: middle;
+	height: 2.5em;
+	opacity: 0;
+	animation: resultsFade 1s forwards;
+}
+
 #voting p {
 	width: 8em;
 	position: relative;
@@ -266,6 +277,8 @@ img.avatar {
 .stacked-bar-graph {
   height: 38px;
   color:#fff;
+	margin-bottom: 0.45cm;
+	margin-top: 0.15cm;
 
   span {
     display: inline-block;
@@ -280,7 +293,14 @@ img.avatar {
   }
 }
 
-
+@keyframes resultsFade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
 
 @keyframes fadein {
 	from {

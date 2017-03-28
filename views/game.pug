@@ -86,7 +86,17 @@ block content
 				dt
 					img(
 						class='avatar'
+						id=players[i] + 'avatar'
 						src='/images/players/' + players[i] + '.svg'
+					)
+					| &nbsp;
+					= "was a"
+					| &nbsp;
+					img(
+					class='avaType'
+					id=players[i] + 'identity'
+					src='/images/results/human.svg'
+					style='animation-delay:' + (i + 1.5) + 's;'
 					)
 					| &nbsp;
 					#container.stacked-bar-graph
