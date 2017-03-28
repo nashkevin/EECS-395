@@ -254,15 +254,6 @@ img.avatar {
 	content:"\00a0";
 }
 
-.fadein {
-	animation: fadein 2s;
-}
-
-.fadeout {
-	animation: fadeout 2s;
-	font-size: 0;
-}
-
 .noselect {
 	cursor: default;
 	-webkit-touch-callout: none;
@@ -292,27 +283,4 @@ img.avatar {
     padding: 0px;
 
   }
-}
-
-
-
-@keyframes fadein {
-	from {
-		opacity: 0;
-		font-size: 0;
-	}
-	to {
-		opacity: 1;
-		font-size: 1em;
-	}
-}
-@keyframes fadeout {
-	from {
-		opacity: 1;
-		font-size: 1em;
-	}
-	to {
-		opacity: 0;
-		font-size: 0;
-	}
 }
