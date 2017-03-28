@@ -9,6 +9,9 @@ const MAX_SIZE = 8;
 const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippo',
     'koala', 'lemur', 'pig', 'tiger', 'whale', 'zebra'];
 
+// How long to wait after the most recent message before displaying a prompt.
+const PROMPT_WAITING_PERIOD_MS = 15 * 1000;
+
 var method = Room.prototype;
 
 function Room(maxSize) {
@@ -17,9 +20,10 @@ function Room(maxSize) {
     // Maps from client to a boolean of whether or not they are ready to vote.
     this.readyMap = new Map();
 
-    // Set of all bots. Each bot should have a "send" method that takes a string
-    // and delivers it to the bot. The bot should send messages by calling
-    // "broadcast" on this room.
+    // Set of all bots. Each bot should have a "send" method:
+    // function send(message, sender)
+    // that delivers the message to the bot. The sender can be null.
+    // The bot should send messages by calling "broadcast" on this room.
     this.bots = new Set();
 
     // The maximum size for the room (humans + bots).
@@ -41,6 +45,9 @@ function Room(maxSize) {
     // Maps from player to ballot. Ballots are maps from player IDs to the
     // string "human" or "robot".
     this._ballots = new Map();
+
+    // Keep track of when the last message was sent in the room.
+    this._lastMessageTime = Date.now();
 }
 
 method.playerCount = function() {
@@ -101,6 +108,9 @@ method.removeDisconnectedPlayers = function() {
 
 method.broadcast = function(message, sender) {
     var payload = message;
+
+    this._lastMessageTime = Date.now();
+
     if (sender) {
         id = this._playerToId.get(sender);
         payload = JSON.stringify({"playerMessage": {"id": id, "message": message}});
@@ -113,7 +123,7 @@ method.broadcast = function(message, sender) {
 
     this.bots.forEach(function each(bot) {
         if (sender != bot) { // do not message self
-            bot.send(payload);
+            bot.send(message, sender);
         }
     });
 }
@@ -132,6 +142,8 @@ method.signalStart = function() {
 			client.send(JSON.stringify(obj));
 		}
 	});
+    this._lastMessageTime = Date.now();
+    this.promptIfInactive();
 }
 
 /* Randomize the order from insertion order (i.e. the order in which players
@@ -227,6 +239,31 @@ method.tallyVotes = function() {
 /* Returns the ID of the player, which is also the player's display name. */
 method.getPlayerName = function(player) {
     return this._playerToId.get(player);
+}
+
+method.promptIfInactive = function() {
+    // If the proper time has elapsed, send a prompt.
+    if (Date.now() - this._lastMessageTime >= PROMPT_WAITING_PERIOD_MS) {
+        this.sendPrompt();
+    }
+
+    // Check again later.
+    var that = this;
+    setTimeout(function() {that.promptIfInactive()}, PROMPT_WAITING_PERIOD_MS);
+}
+
+method.sendPrompt = function() {
+    var prompt = "What is your favorite color?"; //TODO
+    var payload = JSON.stringify({"prompt": prompt});
+    this.humans.forEach(function each(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(payload);
+		}
+	});
+
+    this.bots.forEach(function each(bot) {
+        bot.send(prompt, null);
+    });
 }
 
 module.exports = Room;

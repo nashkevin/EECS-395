@@ -77,6 +77,14 @@ function handleJson(json) {
 		var timeout = 2000 + 40 * message.length;
 		setTimeout(function() { fadeBubble(speechBubble, message); }, timeout);
 	}
+
+	if (json.prompt) {
+		var message = json.prompt;
+		var promptBubble = document.getElementById("prompt");
+		promptBubble.innerHTML = message;
+		var timeout = 5000;
+		setTimeout(function() { fadeBubble(promptBubble, message); }, timeout);
+	}
 }
 
 function fadeBubble(element, startingContent) {
