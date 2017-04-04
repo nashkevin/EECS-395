@@ -8,7 +8,8 @@ const Rooms = require("./rooms");
 /* The largest the message log is allowed to be, in bytes */
 const MAX_LOG_SIZE = 5243000;
 
-const messageHistory = "./game/bots/recentmessages.txt";
+const statementHistory = "./game/bots/statements.txt";
+const questionHistory = "./game/bots/questions.txt";
 
 // Enum of game modes.
 var Mode = {
@@ -79,9 +80,15 @@ function handleClientJson(client, json) {
 /* Broadcast text to all the clients in the sender's room. */
 function broadcastText(sender, message) {
 	var room = Rooms.getRoomOfClient(sender);
+	message = message.trim();
 	room.broadcast(message, sender);
 
-	appendMessageToLog(messageHistory, message);
+	if (message.charAt(message.length - 1) == "?") {
+		appendMessageToLog(questionHistory, message);
+	}
+	else {
+		appendMessageToLog(statementHistory, message);
+	}
 }
 
 /* Called when a client closes the WebSocket connection. */
@@ -136,11 +143,7 @@ function clientError(client, message) {
 }
 
 function appendMessageToLog(filename, message) {
-	// if (fs.statSync(filename).size < MAX_LOG_SIZE) {
-		// Append the message to the text log of recent messages
-		fs.appendFile(filename, message + "\n", "utf8");
-	// }
-
+	fs.appendFile(filename, message + "\n", "utf8");
 }
 
 
