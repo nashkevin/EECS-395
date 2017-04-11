@@ -247,7 +247,7 @@ img.avaType {
 	transform: translate(-50%,-50%);
 	text-align: center;
 	background: #0A7;
-	opacity: .75; /* So that messages underneath aren't completely hidden */
+	opacity: .85; /* So that messages underneath aren't completely hidden */
 	box-shadow: .5em .5em .75em rgba(0,0,0,.25);
 	border-radius: 16px;
 	max-width: 75%;

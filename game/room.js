@@ -14,7 +14,10 @@ const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippo',
 const PROMPT_FILENAME = __dirname + '/prompts.txt';
 
 // How long to wait after the most recent message before displaying a prompt.
-const PROMPT_WAITING_PERIOD_MS = 15 * 1000;
+const PROMPT_SILENCE_DURATION_MS = 10 * 1000;
+
+// How long to wait after the last prompt before displaying another.
+const PROMPT_COOLDOWN_MS = 30 * 1000;
 
 var method = Room.prototype;
 
@@ -56,6 +59,9 @@ function Room(maxSize) {
 
     // Keep track of when the last message was sent in the room.
     this._lastMessageTime = Date.now();
+
+    // Keep track of when the last prompt was broadcast.
+    this._lastPromptTime = 1;
 }
 
 method.playerCount = function() {
@@ -107,11 +113,11 @@ method.isFull = function() {
 method.removeDisconnectedPlayers = function() {
     var room = this;
     this.humans.forEach(function each(client) {
-		if (client.readyState === WebSocket.CLOSING
+        if (client.readyState === WebSocket.CLOSING
             || client.readyState === WebSocket.CLOSED) {
-			room.remove(client);
-		}
-	});
+            room.remove(client);
+        }
+    });
 }
 
 method.broadcast = function(message, sender) {
@@ -124,10 +130,10 @@ method.broadcast = function(message, sender) {
         payload = JSON.stringify({"playerMessage": {"id": id, "message": message}});
     }
     this.humans.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(payload);
-		}
-	});
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(payload);
+        }
+    });
 
     this.bots.forEach(function each(bot) {
         if (sender != bot) { // do not message self
@@ -141,15 +147,15 @@ method.broadcast = function(message, sender) {
 method.signalStart = function() {
     var room = this; // "this" changes inside the loop
     this.humans.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
+        if (client.readyState === WebSocket.OPEN) {
             var obj = {
                 'start': true,
                 'playerId': room._playerToId.get(client),
                 'players': JSON.stringify(room._shuffledPlayerIdList())
             };
-			client.send(JSON.stringify(obj));
-		}
-	});
+            client.send(JSON.stringify(obj));
+        }
+    });
     this._lastMessageTime = Date.now();
     this.promptIfInactive();
 }
@@ -180,10 +186,10 @@ method.isReadyToVote = function() {
     var readyMap = this.readyMap;
     var ready = true;
     this.humans.forEach(function each(client) {
-		if (!readyMap.has(client) || !readyMap.get(client)) {
+        if (!readyMap.has(client) || !readyMap.get(client)) {
             ready = false;
         }
-	});
+    });
     return ready;
 }
 
@@ -203,20 +209,20 @@ method.everyoneHasVoted = function() {
     var ballots = this._ballots;
     var ready = true;
     this.humans.forEach(function each(client) {
-		if (!ballots.has(client)) {
+        if (!ballots.has(client)) {
             ready = false;
         }
-	});
+    });
     return ready;
 }
 
 method.broadcastResults = function() {
     var payload = JSON.stringify({"results": this.tallyVotes()});
     this.humans.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(payload);
-		}
-	});
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(payload);
+        }
+    });
 }
 
 method.tallyVotes = function() {
@@ -251,17 +257,19 @@ method.getPlayerName = function(player) {
 
 method.promptIfInactive = function() {
     // If the proper time has elapsed, send a prompt.
-    if (Date.now() - this._lastMessageTime >= PROMPT_WAITING_PERIOD_MS) {
+    if (Date.now() - this._lastMessageTime >= PROMPT_SILENCE_DURATION_MS &&
+        Date.now() - this._lastPromptTime >= PROMPT_COOLDOWN_MS) {
         this.sendPrompt();
     }
 
     // Check again later.
     var that = this;
-    setTimeout(function() {that.promptIfInactive()}, PROMPT_WAITING_PERIOD_MS);
+    setTimeout(function() {that.promptIfInactive()}, PROMPT_SILENCE_DURATION_MS);
 }
 
 method.sendPrompt = function() {
     this._lastMessageTime = Date.now();
+    this._lastPromptTime = Date.now();
 
     // Get the first prompt from the list and then rotate it to the end of the list.
     var prompt = this._prompts[0];
@@ -269,10 +277,10 @@ method.sendPrompt = function() {
 
     var payload = JSON.stringify({"prompt": prompt});
     this.humans.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(payload);
-		}
-	});
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(payload);
+        }
+    });
 
     this.bots.forEach(function each(bot) {
         bot.send(prompt, null);
