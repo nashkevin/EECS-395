@@ -1,8 +1,7 @@
 // Manages different rooms.
 
 var Room = require("./room");
-
-var MarkovBot = require("./bots/markov");
+var BotFactory = require("./bots/botfactory");
 
 // All rooms still waiting to reach capacity.
 var waitingRooms = new Set();
@@ -104,7 +103,7 @@ function addBotsGradually(room, timeout) {
     if (room.isFull()) {
         startGameplay(room);
     } else {
-        room.addBot(new MarkovBot(room)); //TODO
+        room.addBot(BotFactory.generate(room));
     }
     if (room.isFull()) {
         startGameplay(room);
