@@ -1,7 +1,9 @@
 var fs = require('fs');
 var markov = require('markov');
 
-/* This bot is based on a simple Markov chain. */
+/* This bot is based on a simple Markov chain.
+ * https://github.com/substack/node-markov
+ */
 var method = MarkovBot.prototype;
 
 function MarkovBot(room) {
@@ -21,23 +23,31 @@ method.send = function(message, sender) {
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
-        // Always respond if addressed. Respond 50% of the time to questions.
-        // Respond 20% of the time if we haven't responded already.
-        if ( (message.toLowerCase().includes(this.room.getPlayerName(this).toLowerCase()))
-                || (message.includes("?") && Math.random() < 0.5)
-                || Math.random() < 0.2 ) {
-            this.lastResponded = new Date().getTime();
 
-            var timeout = 1000 + Math.random() * 4000;
-            var that = this;
-            setTimeout(function () {
-                that.respond(message);
-            }, timeout);
+        var key = this.markov.search(message);
+        if (message.toLowerCase().includes(this.room.getPlayerName(this).toLowerCase())) {
+            this.respondWithProbability(message, 0.95);
+        } else if (typeof key !== undefined) {
+            // If there's a key, the Markov chain hopefully has a better response.
+            this.respondWithProbability(message, 0.6);
+        } else {
+            this.respondWithProbability(message, 0.3);
         }
     }
 }
 
-method.respond = function(message) {
+method.respondWithProbability = function(message, probability) {
+    if (Math.random() < probability) {
+        this.lastResponded = new Date().getTime();
+        var timeout = 1000 + Math.random() * 4000;
+        var that = this;
+        setTimeout(function () {
+            that.sendResponse(message);
+        }, timeout);
+    }
+}
+
+method.sendResponse = function(message) {
     var response = this.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' ');
     this.room.broadcast(response, this);
 }
