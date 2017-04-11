@@ -2,7 +2,7 @@
 
 var Room = require("./room");
 
-var ConversationBot = require("./bots/conversationv1");
+var MarkovBot = require("./bots/markov");
 
 // All rooms still waiting to reach capacity.
 var waitingRooms = new Set();
@@ -104,7 +104,7 @@ function addBotsGradually(room, timeout) {
     if (room.isFull()) {
         startGameplay(room);
     } else {
-        room.addBot(new ConversationBot(room));
+        room.addBot(new MarkovBot(room)); //TODO
     }
     if (room.isFull()) {
         startGameplay(room);
