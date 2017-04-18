@@ -6,8 +6,9 @@ var markov = require('markov');
  */
 var method = MarkovBot.prototype;
 
-function MarkovBot(room) {
+function MarkovBot(room, parent = null) {
     this.room = room;
+	this.parent = parent;
 
     this.markov = markov(Math.floor(Math.random() * 5));
 
@@ -23,15 +24,21 @@ method.send = function(message, sender) {
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
-
         var key = this.markov.search(message);
-        if (message.toLowerCase().includes(this.room.getPlayerName(this).toLowerCase())) {
+				var name;
+				if(this.parent != null) {
+					name = this.parent;
+				}
+				else {
+					name = this;
+				}
+        if (message.toLowerCase().includes(this.room.getPlayerName(name).toLowerCase())) {
             this.respondWithProbability(message, 0.95);
         } else if (typeof key !== undefined) {
             // If there's a key, the Markov chain hopefully has a better response.
-            this.respondWithProbability(message, 0.6);
+            return this.respondWithProbability(message, 0.6);
         } else {
-            this.respondWithProbability(message, 0.3);
+            return this.respondWithProbability(message, 0.3);
         }
     }
 }
@@ -42,7 +49,12 @@ method.respondWithProbability = function(message, probability) {
         var timeout = 1000 + Math.random() * 4000;
         var that = this;
         setTimeout(function () {
-            that.sendResponse(message);
+			if(that.parent == null) {
+		        that.sendResponse(message);
+			}
+			else {
+				that.parent.chooseMess("test", null);
+			}
         }, timeout);
     }
 }

@@ -1,7 +1,9 @@
 var ConversationBot = require("./conversationv1");
 var MarkovBot = require("./markov");
+var CombinedBot = require("./convers-markovCombined")
 
-var bots = [ConversationBot, MarkovBot];
+//var bots = [ConversationBot, MarkovBot, CombinedBot];
+var bots = [CombinedBot];
 
 function generateBot(room) {
     // Choose random bot from array

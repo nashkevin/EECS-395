@@ -2,11 +2,12 @@ var ConversationV1 = require('watson-developer-cloud/conversation/v1');
 
 var method = ConversationBot.prototype;
 
-function ConversationBot(room) {
+function ConversationBot(room, parent = null) {
     this.room = room;
+	this.parent = parent;
     this.conversation = new ConversationV1({
-        "username": "a43eee8f-6a96-40fb-a297-f99365f2c202",
-        "password": "uX8MIl44vAmx",
+        "username": "f48dc400-9585-4f4e-b623-204f8d7a6f2a",
+        "password": "sWe2AciMSOT4",
         "version_date": '2017-02-03'
     });
 
@@ -21,11 +22,18 @@ method.send = function(message, sender) {
     if ((now-this.lastResponded) > this.cooldownDelay) {
         // Always respond if addressed. Respond 50% of the time to questions.
         // Respond 20% of the time if we haven't responded already.
-        if ( (message.toLowerCase().includes(this.room.getPlayerName(this).toLowerCase()))
+				var name;
+				if(this.parent != null) {
+					name = this.parent;
+				}
+				else {
+					name = this;
+				}
+        if ( (message.toLowerCase().includes(this.room.getPlayerName(name).toLowerCase()))
                 || (message.includes("?") && Math.random() < 0.5)
                 || Math.random() < 0.2 ) {
             this.lastResponded = new Date().getTime();
-            this.respond(message);
+            return this.respond(message);
         }
     }
 }
@@ -35,11 +43,11 @@ method.respond = function(message) {
     var room = bot.room;
     setTimeout(function() {
         var answer = bot.conversation.message({
-            workspace_id: 'd4c1a5ce-0485-4c20-b593-2e62b1bc5319',
+            workspace_id: '69518a55-f3c4-4228-92e1-c7efc45cbcf5',
             input: {'text': message},
             context: {}
         }, function(err, response) {
-            bot.handleReponse(err, response);
+        		bot.handleReponse(err, response);
         })
     }, 500 + 1500 * Math.random());
 }
@@ -49,7 +57,12 @@ method.handleReponse = function(err, response) {
         console.log('error:', err);
     } else {
         message = JSON.stringify(response.output.text).slice(2, -2);
-        this.room.broadcast(message, this);
+        if(this.parent != null) {
+            this.parent.chooseMess(null, response);
+        }
+        else {
+            this.room.broadcast(message, this);
+        }
     }
 }
 
