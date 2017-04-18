@@ -53,7 +53,7 @@ method.respondWithProbability = function(message, probability) {
 		        that.sendResponse(message);
 			}
 			else {
-				that.parent.chooseMess("test", null);
+				that.parent.chooseMess(that.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' '), null);
 			}
         }, timeout);
     }
