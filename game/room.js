@@ -19,6 +19,13 @@ const PROMPT_SILENCE_DURATION_MS = 10 * 1000;
 // How long to wait after the last prompt before displaying another.
 const PROMPT_COOLDOWN_MS = 30 * 1000;
 
+const STATES = {
+    PREGAME: 1,
+    GAME: 2,
+    VOTING: 3,
+    RESULTS: 4
+};
+
 var method = Room.prototype;
 
 function Room(maxSize) {
@@ -62,6 +69,8 @@ function Room(maxSize) {
 
     // Keep track of when the last prompt was broadcast.
     this._lastPromptTime = 1;
+
+    this._state = STATES.PREGAME;
 }
 
 method.playerCount = function() {
@@ -91,15 +100,20 @@ method.addBot = function(bot) {
 }
 
 method.remove = function(player) {
-    if (this.humans.has(player)) {
-        this.humans.delete(player);
-    } else {
-        this.bots.delete(player);
+    // If we've already started the game, we can't just remove a player.
+    // Otherwise, the player will be gone during voting and null pointers
+    // will happen and everyone will be sad.
+    if (this._state === STATES.PREGAME) {
+        if (this.humans.has(player)) {
+            this.humans.delete(player);
+        } else {
+            this.bots.delete(player);
+        }
+        var id = this._playerToId.get(player);
+        this._remainingPlayerIds.push(id);
+        this._playerToId.delete(player);
+        this._idToPlayer.delete(id);
     }
-    var id = this._playerToId.get(player);
-    this._remainingPlayerIds.push(id);
-    this._playerToId.delete(player);
-    this._idToPlayer.delete(id);
 }
 
 method.isFull = function() {
@@ -158,6 +172,7 @@ method.signalStart = function() {
     });
     this._lastMessageTime = Date.now();
     this.promptIfInactive();
+    this._state = STATES.GAME;
 }
 
 /* Randomize the order from insertion order (i.e. the order in which players
@@ -186,7 +201,7 @@ method.isReadyToVote = function() {
     var readyMap = this.readyMap;
     var ready = true;
     this.humans.forEach(function each(client) {
-        if (!readyMap.has(client) || !readyMap.get(client)) {
+        if (client.readyState === WebSocket.OPEN && (!readyMap.has(client) || !readyMap.get(client))) {
             ready = false;
         }
     });
@@ -196,6 +211,7 @@ method.isReadyToVote = function() {
 /* Broadcast to each player that we are ready to vote. */
 method.signalVote = function() {
     this.broadcast(JSON.stringify({'startVoting': true}));
+    this._state = STATES.VOTING;
 }
 
 method.submitBallot = function(client, ballot) {
@@ -209,7 +225,7 @@ method.everyoneHasVoted = function() {
     var ballots = this._ballots;
     var ready = true;
     this.humans.forEach(function each(client) {
-        if (!ballots.has(client)) {
+        if (!ballots.has(client) && client.readyState === WebSocket.OPEN) {
             ready = false;
         }
     });
@@ -223,6 +239,7 @@ method.broadcastResults = function() {
             client.send(payload);
         }
     });
+    this._state = STATES.RESULTS;
 }
 
 method.tallyVotes = function() {
