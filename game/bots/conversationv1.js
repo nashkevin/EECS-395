@@ -6,8 +6,8 @@ function ConversationBot(room, parent = null) {
     this.room = room;
 	this.parent = parent;
     this.conversation = new ConversationV1({
-        "username": "f48dc400-9585-4f4e-b623-204f8d7a6f2a",
-        "password": "sWe2AciMSOT4",
+        "username": "86edc0db-baf9-4808-9a38-811e1ccc2ff7",
+        "password": "6dCYs1CMCzI3",
         "version_date": '2017-02-03'
     });
 
@@ -43,7 +43,7 @@ method.respond = function(message) {
     var room = bot.room;
     setTimeout(function() {
         var answer = bot.conversation.message({
-            workspace_id: '69518a55-f3c4-4228-92e1-c7efc45cbcf5',
+            workspace_id: '616617a8-da40-4e0e-829a-e0d0643ab368',
             input: {'text': message},
             context: {}
         }, function(err, response) {
