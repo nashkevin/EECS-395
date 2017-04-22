@@ -1,5 +1,9 @@
 // Manages different rooms.
 
+// The maximum time, in seconds, that a room should wait before enough bots are
+// added. Bots are gradually added at intervals 1/2, 1/4, 1/8, ... of this constant.
+const MAX_ROOM_FILL_TIME = 30;
+
 var Room = require("./room");
 var BotFactory = require("./bots/botfactory");
 
@@ -75,7 +79,7 @@ function addClientToRoom(client, room) {
     if (room.isFull()) {
         startGameplay(room);
     } else {
-        addBotsGradually(room, 12);
+        addBotsGradually(room, MAX_ROOM_FILL_TIME * 0.5);
     }
 }
 
@@ -98,8 +102,6 @@ function submitBallot(client, ballot) {
 
 // Gradually adds bots with a decaying frequency. Timeout value is in seconds.
 function addBotsGradually(room, timeout) {
-    //TODO this is an overly simplistic method of balancing humans and bots.
-    // Make it more sophisticated.
     if (room.isFull()) {
         startGameplay(room);
     } else {
