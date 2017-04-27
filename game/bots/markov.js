@@ -40,6 +40,13 @@ function MarkovBot(room, parent = null) {
 
 // Send a message to the bot. The sender is optional.
 method.send = function(message, sender) {
+    // Learn from everyone else in the room. This learns from other bots, too,
+    // but we don't know who's a human or who's a bot at this point, so it
+    // would be mean to discriminate!
+    if (sender !== null) {
+        this.markov.seed(message);
+    }
+
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
