@@ -1,5 +1,10 @@
 var fs = require('fs');
 var markov = require('markov');
+var request = require('request');
+
+const STATEMENTS_FILE = __dirname + '/statements.txt';
+// If STATEMENTS_FILE does not exist, we can use this high-quality content.
+const DEFAULT_SEED = 'https://raw.githubusercontent.com/zanchi/random-bee-movie/master/text';
 
 /* This bot is based on a simple Markov chain.
  * https://github.com/substack/node-markov
@@ -12,8 +17,22 @@ function MarkovBot(room, parent = null) {
 
     this.markov = markov(Math.floor(Math.random() * 5));
 
-    var seed = fs.createReadStream(__dirname + '/statements.txt');
-    this.markov.seed(seed);
+    // Add at least a minimum amount of text because the Markov library doesn't
+    // like empty seeds at all.
+    this.markov.seed('beep beep detective');
+    // Add user-created statements to the seed.
+    if (fs.existsSync(STATEMENTS_FILE)) {
+        var seed = fs.createReadStream(STATEMENTS_FILE);
+        this.markov.seed(seed);
+    } else {
+        // If the statements file does not exist, try and get a seed from online.
+        var that = this;
+        request.get(DEFAULT_SEED, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                that.markov.seed(body);
+            }
+        });
+    }
 
     this.lastResponded = new Date().getTime();
     this.cooldownDelay = 6000; // milliseconds
@@ -60,8 +79,14 @@ method.respondWithProbability = function(message, probability) {
 }
 
 method.sendResponse = function(message) {
-    var response = this.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' ');
-    this.room.broadcast(response, this);
+    try {
+        var response = this.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' ');
+        this.room.broadcast(response, this);
+    } catch (error) {
+        // This Markov library sometimes throws "TypeError: Cannot read property
+        // 'words' of undefined". It seems to only happen when the seed is very small.
+        console.error(error);
+    }
 }
 
 module.exports = MarkovBot;
