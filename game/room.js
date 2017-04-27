@@ -6,6 +6,9 @@ const fs = require('fs');
 // Numbers of players (humans + robots)
 const MAX_SIZE = 8;
 
+// Max length for chat messages.
+const MAX_MESSAGE_LENGTH = 80;
+
 // Avatars identifying players. Each name refers to an image.
 const AVATARS = ['bull', 'chick', 'crab', 'fox', 'hedgehog', 'hippo',
     'koala', 'lemur', 'pig', 'tekin', 'tiger', 'whale', 'zebra'];
@@ -135,10 +138,12 @@ method.removeDisconnectedPlayers = function() {
 }
 
 method.broadcast = function(message, sender) {
-    var payload = message;
+    // Trim the message length, if needed.
+    message = message.substring(0, MAX_MESSAGE_LENGTH);
 
     this._lastMessageTime = Date.now();
 
+    var payload = message;
     if (sender) {
         id = this._playerToId.get(sender);
         payload = JSON.stringify({"playerMessage": {"id": id, "message": message}});
