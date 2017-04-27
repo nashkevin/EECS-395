@@ -218,6 +218,8 @@ function proceedToResults(results) {
 			}
 		}
 
+		document.getElementById(playerId + "score").innerHTML = votes["score"];
+
 		document.getElementById(playerId + "identity").src = "/images/results/" + votes["identity"] + ".svg";
 		setTimeout(extendBar, 5, playerId, "human");
 		document.getElementById(playerId + "human").innerHTML = votes["human"] != 0 ? Math.floor(((votes["human"]) / (votes["human"] + votes["robot"])) * 100) + "% Human" : " ";

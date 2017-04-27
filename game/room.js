@@ -29,6 +29,14 @@ const STATES = {
     RESULTS: 4
 };
 
+// Point values for computing scores.
+const SCORES = {
+    GUESS_RIGHT: 20,     // this player guessed another player correctly
+    GUESS_WRONG : -20,   // this player guessed another player wrong
+    IS_GUESSED_RIGHT: 0, // this player was identified correctly
+    IS_GUESSED_WRONG: 30 // this player fooled another player
+};
+
 var method = Room.prototype;
 
 function Room(maxSize) {
@@ -250,8 +258,9 @@ method.broadcastResults = function() {
 method.tallyVotes = function() {
     // Initialize the object of votes.
     var results = {};
+    // Initialize the result for each player, including their identity.
     for (var id of this._idToPlayer.keys()) {
-        results[id] = {"human": 0, "robot": 0}; // vote count
+        results[id] = {"human": 0, "robot": 0, "score": 0}; // vote count
 
         if (this.humans.has(this._idToPlayer.get(id))) {
             results[id]["identity"] = "human";
@@ -260,11 +269,27 @@ method.tallyVotes = function() {
         }
     }
 
-    for (var ballot of this._ballots.values()) {
-        for (var playerId in ballot) {
-            var guess = ballot[playerId];
+    // Iterate through the ballots to compute scores.
+    for (var voter of this._ballots.keys()) {
+        var voterId = this._playerToId.get(voter);
+
+        var ballot = this._ballots.get(voter);
+        for (var voteeId in ballot) {
+            var guess = ballot[voteeId];
             if (guess == "human" || guess == "robot") {
-                results[playerId][guess]++;
+                // Update the vote count for the votee.
+                results[voteeId][guess]++;
+
+                // Update points for the voter and the votee.
+                if (guess == results[voteeId]["identity"]) {
+                    // If the voter guessed the votee correctly
+                    results[voterId]["score"] += SCORES.GUESS_RIGHT;
+                    results[voteeId]["score"] += SCORES.IS_GUESSED_RIGHT;
+                } else {
+                    // If the voter guessed wrong
+                    results[voterId]["score"] += SCORES.GUESS_WRONG;
+                    results[voteeId]["score"] += SCORES.IS_GUESSED_WRONG;
+                }
             }
         }
     }
