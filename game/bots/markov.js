@@ -42,9 +42,13 @@ function MarkovBot(room, parent = null) {
 method.send = function(message, sender) {
     // Learn from everyone else in the room. This learns from other bots, too,
     // but we don't know who's a human or who's a bot at this point, so it
-    // would be mean to discriminate!
+    // would be mean to discriminate! Use a timeout because otherwise, the
+    // immediate response to the message could be really close to the original.
     if (sender !== null) {
-        this.markov.seed(message);
+        var that = this;
+        setTimeout(function () {
+            that.markov.seed(message);
+        }, 15000);
     }
 
     // Don't respond if it's too soon after the last response.
