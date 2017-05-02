@@ -1,10 +1,14 @@
 var fs = require('fs');
-var markov = require('markov');
+var Markov = require('markov');
 var request = require('request');
 
 const STATEMENTS_FILE = __dirname + '/statements.txt';
 // If STATEMENTS_FILE does not exist, we can use this high-quality content.
 const DEFAULT_SEED = 'https://raw.githubusercontent.com/zanchi/random-bee-movie/master/text';
+
+// Only instantiate one Markov chain for the server because if the seed is large,
+// instantiation is resource-intensive.
+var markov = createSeededMarkovChain();
 
 /* This bot is based on a simple Markov chain.
  * https://github.com/substack/node-markov
@@ -15,27 +19,29 @@ function MarkovBot(room, parent = null) {
     this.room = room;
 	this.parent = parent;
 
-    this.markov = markov(Math.floor(Math.random() * 5));
+    this.lastResponded = new Date().getTime();
+    this.cooldownDelay = 6000; // milliseconds
+}
+
+function createSeededMarkovChain() {
+    var markov = Markov(Math.floor(Math.random() * 5));
 
     // Add at least a minimum amount of text because the Markov library doesn't
     // like empty seeds at all.
-    this.markov.seed('beep beep detective');
+    markov.seed('beep beep detective');
     // Add user-created statements to the seed.
     if (fs.existsSync(STATEMENTS_FILE)) {
         var seed = fs.createReadStream(STATEMENTS_FILE);
-        this.markov.seed(seed);
+        markov.seed(seed);
     } else {
         // If the statements file does not exist, try and get a seed from online.
-        var that = this;
         request.get(DEFAULT_SEED, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                that.markov.seed(body);
+                markov.seed(body);
             }
         });
     }
-
-    this.lastResponded = new Date().getTime();
-    this.cooldownDelay = 6000; // milliseconds
+    return markov;
 }
 
 // Send a message to the bot. The sender is optional.
@@ -45,16 +51,15 @@ method.send = function(message, sender) {
     // would be mean to discriminate! Use a timeout because otherwise, the
     // immediate response to the message could be really close to the original.
     if (sender !== null) {
-        var that = this;
         setTimeout(function () {
-            that.markov.seed(message);
+            markov.seed(message);
         }, 15000);
     }
 
     // Don't respond if it's too soon after the last response.
     var now = new Date().getTime();
     if ((now-this.lastResponded) > this.cooldownDelay) {
-        var key = this.markov.search(message);
+        var key = markov.search(message);
 				var name;
 				if(this.parent != null) {
 					name = this.parent;
@@ -83,7 +88,7 @@ method.respondWithProbability = function(message, probability) {
 		        that.sendResponse(message);
 			}
 			else {
-				that.parent.chooseMess(that.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' '), null);
+				that.parent.chooseMess(markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' '), null);
 			}
         }, timeout);
     }
@@ -91,7 +96,7 @@ method.respondWithProbability = function(message, probability) {
 
 method.sendResponse = function(message) {
     try {
-        var response = this.markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' ');
+        var response = markov.respond(message, 1+Math.floor(Math.random() * 9)).join(' ');
         this.room.broadcast(response, this);
     } catch (error) {
         // This Markov library sometimes throws "TypeError: Cannot read property
