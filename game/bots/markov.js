@@ -46,11 +46,12 @@ function createSeededMarkovChain() {
 
 // Send a message to the bot. The sender is optional.
 method.send = function(message, sender) {
-    // Learn from everyone else in the room. This learns from other bots, too,
+    // Learn from everyone else in the room. This can learn from other bots, too,
     // but we don't know who's a human or who's a bot at this point, so it
     // would be mean to discriminate! Use a timeout because otherwise, the
     // immediate response to the message could be really close to the original.
-    if (sender !== null) {
+    // We only do so a fraction of the time to make things more...interesting.
+    if (sender !== null && Math.random() < 0.125) {
         setTimeout(function () {
             markov.seed(message);
         }, 15000);
