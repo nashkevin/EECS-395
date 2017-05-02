@@ -94,7 +94,7 @@ function broadcastText(sender, message) {
 /* Called when a client closes the WebSocket connection. */
 function onClose(code, reason, sender) {
 	var room = Rooms.getRoomOfClient(sender);
-	if (typeof room !== undefined) {
+	if (room != null && sender != null) {
 		room.remove(sender);
 		console.log("A client disconnected. Code: " + code + ". Reason: " + reason);
 	}
